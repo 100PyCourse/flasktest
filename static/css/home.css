@@ -1,0 +1,239 @@
+:root {
+    --dark: rgba(34, 40, 49, 1);
+    --middle: rgba(57, 62, 70, 1);
+    --light: rgba(210, 216, 228, 1);
+    --orange: rgba(214, 90, 49, 1);
+    --black: rgba(0, 0, 0, 1);
+}
+/********* General settings *********/
+* {
+    font-family: 'Montserrat';
+    font-weight: 300;
+    color: #fff;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+.orange-text {
+    color: var(--orange);
+}
+
+/*General******** Hero *********/
+#hero-section {
+    background-color: var(--middle);
+    width: 100%;
+    padding-top: 200px;
+    overflow: hidden;
+}
+.hero-container {
+    display: flex;
+    justify-content: center;
+    padding-bottom: 5px;
+}
+.hero-spacer {
+    background-color: var(--middle);
+    height: 175px;
+}
+
+/*Personal******** Hero *********/
+.hero-title-div {
+    width: 500px;
+    height: 300px;
+    margin-right: 4%;
+}
+.hero-vline {
+    height: 110px;
+    width: 5px;
+    margin-right: 20px;
+    background-color: var(--orange);
+}
+h1 {
+    font-size: 6rem;
+}
+.hero-title {
+    display: flex;
+}
+.hero-subtitle {
+    position: relative;
+    bottom: 20px;
+    left: 50px;
+    font-size: 0.9rem;
+    color: var(--dark);
+    opacity: 0.6;
+}
+
+/*Anchors******** Hero *********/
+.hero-anchor-div {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.hero-anchor-div a i:hover {
+    color: var(--orange);
+    opacity: 0.8;
+}
+.hero-anchor-div-small {
+    display: none;
+    margin: 40px 0 60px;
+}
+.hero-anchor-div-small a i:hover {
+    color: var(--orange);
+    opacity: 0.8;
+}
+
+/*Cards******** Hero *********/
+.hero-profile-card {
+    height: 140px;
+    position: relative;
+    border-bottom: 2px solid var(--orange);
+}
+.profile-card-text {
+    height: 140px;
+    position: relative;
+    opacity: 1;
+    transition: opacity 0.7s;
+    line-height: 1.7rem;
+}
+.hero-icon-card {
+    height: 140px;
+    position: relative;
+    border-bottom: 2px solid var(--orange);
+}
+.icon-card-text {
+    opacity: 0;
+    transition: opacity 0.7s;
+    padding-left: 45px;
+    padding-top: 10px;
+    line-height: 1.7rem;
+}
+/*Media******** Hero *********/
+@media screen and (max-width: 768px) {
+    #hero-section { padding-top: 150px }
+    .hero-container { text-align: center }
+    .hero-anchor-div { display: none }
+    .hero-anchor-div-small { display: flex }
+    .hero-anchor-div-small { justify-content: space-between }
+    .hero-title-div { width: 400px }
+    .hero-title-div { height: 385px }
+    .hero-title-div { margin-right: 0 }
+    .hero-vline {height: 85px }
+    .hero-vline { margin-top: 5px }
+    .hero-vline { margin-right: 15px }
+    .hero-vline { width: 4px }
+    h1 { font-size: 5rem }
+    .hero-subtitle { font-size: 0.8rem }
+    .hero-subtitle { left: 0 }
+    .hero-subtitle { bottom: 13px }
+    .icon-card-text { padding-left: 0 }
+    .profile-card-text { width: 375px }
+    .hero-spacer { height: 150px }
+
+}
+@media screen and (max-width: 576px) {
+    #hero-section { height: 480px }
+    .hero-container { text-align: center }
+    .hero-anchor-div { display: none }
+    .hero-anchor-div-small { display: flex }
+    .hero-anchor-div-small { justify-content: space-between }
+    .hero-anchor-div-small { margin-bottom: 40px }
+    .hero-title-div { width: 275px }
+    .hero-title-div { height: 355px }
+    .hero-title-div { margin-right: 0 }
+    .hero-vline {height: 60px }
+    .hero-vline { margin-right: 10px }
+    .hero-vline { width: 3px }
+     h1 { font-size: 3.5rem }
+    .hero-subtitle { font-size: 0.7rem }
+    .hero-subtitle { left: 0 }
+    .hero-subtitle { bottom: 12px }
+    .hero-profile-card { height: 130px }
+    .hero-profile-card { top }
+    .icon-card-text { padding-left: 0 }
+    .icon-card-text { padding-top: 0 }
+    .profile-card-text { width: 275px }
+    .hero-spacer { height: 100px }
+
+}
+
+/*General******** Skill *********/
+#skill-section {
+    background-color: var(--light);
+    width: 100%;
+    padding: 150px 0;
+}
+.skill-container {
+    padding: 0 7%;
+}
+.skill-div {
+    text-align: center;
+    height: 225px;
+}
+.skill-logo {
+    position: relative;
+    bottom: 10px;
+    transition: bottom 0.3s;
+    width: 120px;
+    filter: invert(21%) sepia(25%) saturate(283%) hue-rotate(177deg) brightness(94%) contrast(87%);
+}
+.skill-logo:hover {
+    bottom: 0px;
+}
+.skill-div h5 {
+    margin-top: 10px;
+    margin-bottom: 30px;
+    color: var(--black);
+}
+.skill-div p {
+    color: var(--black);
+}
+.skill-card-h5,
+.skill-card-p1,
+.skill-card-p2,
+.skill-card-p3,
+.skill-card-p4 {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+.skill-card-h5 {
+    font-weight: 600;
+}
+.skill-card-p4 {
+    font-weight: 400;
+}
+.skill-sect-link {
+    text-decoration: none;
+    font-weight: 600;
+    color: inherit;
+}
+.skill-sect-link:hover {
+    color: inherit;
+    opacity: 0.7;
+    font-weight: 800;
+}
+.skill-card {
+    position: relative;
+    height: 3px;
+    width: 100%;
+    background-color: var(--orange);
+}
+.skill-spacer {
+    background-color: var(--light);
+    height: 100px;
+}
+
+/*Media******** Skill *********/
+@media screen and (max-width: 768px) {
+    #skill-section { padding-bottom: 50px }
+    .skill-div { height: 380px }
+    .skill-spacer { display: none }
+}
+
+/*General******** Data *********/
+#data-section {
+    background-color: var(--orange);
+    height: 500px;
+    width: 100%;
+    opacity: 0.8;
+}
+

@@ -1,0 +1,48 @@
+/*.gradient-custom {
+*//* fallback for old browsers *//*
+background: #6a11cb;
+
+*//* Chrome 10-25, Safari 5.1-6 *//*
+background: -webkit-linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1));
+
+*//* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ *//*
+background: linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1));
+}*/
+
+.gradient-custom {
+    background-image: url('../images/landing/portal_bg2.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.login-height {
+    min-height: 100vh;
+}
+.card {
+    background-image: url('../images/landing/card-background.png');
+}
+.card-items {
+    padding-top: 10%;
+}
+
+#login-card {
+    height: 850px;
+    display: inline-block;
+    opacity: 1;
+    -webkit-transition: all 2s ease-in-out;
+    -moz-transition: all 2s ease-in-out;
+    -ms-transition: all 2s ease-in-out;
+    -o-transition: all 2s ease-in-out;
+    transition: all 2s ease-in-out;
+}
+
+#register-card {
+    height: 850px;
+    display: none;
+    opacity: 0.2;
+    -webkit-transition: all 2s ease-in-out;
+    -moz-transition: all 2s ease-in-out;
+    -ms-transition: all 2s ease-in-out;
+    -o-transition: all 2s ease-in-out;
+    transition: all 2s ease-in-out;
+}

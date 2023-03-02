@@ -1,0 +1,321 @@
+{% extends "base.html" %}
+
+{% block title %}
+Home
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
+
+{% block content %}
+
+<section id="hero-section">
+
+    <div class="hero-container">
+
+        <div class="hero-title-div">
+
+            <div class="hero-header">
+                <div class="hero-title">
+                    <div class="hero-vline"></div>
+                    <h1>Tomas W</h1>
+                </div>
+
+                <div class="hero-subtitle">
+                    <p>making programming interesting.</p>
+                </div>
+            </div>
+
+            <div class="hero-anchor-div-small">
+            <a class="skill-icon" href="#"><i class="fa-solid fa-brain fa-xl"></i></a>
+            <a class="data-icon" href="#"><i class="fa-solid fa-chart-line fa-xl"></i></a>
+            <a class="game-icon" href="#"><i class="fa-solid fa-dice fa-xl"></i></a>
+            <a class="project-icon" href="#"><i class="fa-solid fa-wrench fa-xl"></i></a>
+            <a class="contact-icon" href="#"><i class="fa-regular fa-address-card fa-xl"></i></a>
+        </div>
+
+            <div class="hero-profile-card">
+                <p class="profile-card-text">
+                    Welcome.  Have a look around in my training area.
+                    You can find all kinds of projects and games I'm working on.
+                </p>
+            </div>
+
+            <div class="hero-icon-card">
+                <p class="icon-card-text">
+                    Welcome.  Have a look around in my training area.
+                    You can find all kinds of projects and games I'm working on to improve my skills as a programmer.
+                </p>
+            </div>
+        </div>
+
+        <div class="hero-anchor-div">
+            <a class="skill-icon" href="#"><i class="fa-solid fa-brain fa-xl"></i></a>
+            <a class="data-icon" href="#"><i class="fa-solid fa-chart-line fa-xl"></i></a>
+            <a class="game-icon" href="#"><i class="fa-solid fa-dice fa-xl"></i></a>
+            <a class="project-icon" href="#"><i class="fa-solid fa-wrench fa-xl"></i></a>
+            <a class="contact-icon" href="#"><i class="fa-regular fa-address-card fa-xl"></i></a>
+        </div>
+    </div>
+
+
+</section>
+
+<div class="hero-spacer"></div>
+
+<section id="skill-section">
+    <div class="container skill-container">
+
+        <div class="row d-flex justify-content-center">
+
+            <div class="skill-div col-lg-4 col-md-12 col-sm-12 d-flex justify-content-center">
+                <div class="python-skill-div">
+                    <a href="#skill-section" class="logo-anchor"><img src="static/images/home/python-logo.png" alt="xl" class="skill-logo python-logo"></a>
+                    <div class="python-card skill-card"></div>
+                    <h5 class="python-card-h5 skill-card-h5">Python</h5>
+                    <p class="python-card-p1 skill-card-p1">Flask</p>
+                    <p class="python-card-p2 skill-card-p2">Jinja</p>
+                    <p class="python-card-p3 skill-card-p3">Pandas</p>
+                    <p class="python-card-p4 skill-card-p4"><a class="skill-sect-link" href="#skill-section">Read more..</a></p>
+                </div>
+            </div>
+
+            <div class="skill-div col-lg-4 col-md-6 col-sm-12 d-flex justify-content-center">
+                <div class="html-skill-div">
+                    <a href="#skill-section" class="logo-anchor"><img src="static/images/home/html-logo.png" alt="xl" class="skill-logo html-logo"></a>
+                    <div class="html-card skill-card"></div>
+                    <h5 class="html-card-h5 skill-card-h5">HTML</h5>
+                    <p class="html-card-p1 skill-card-p1">Bootstrap</p>
+                    <p class="html-card-p2 skill-card-p2">Flex</p>
+                    <p class="html-card-p3 skill-card-p3">Grid</p>
+                    <p class="html-card-p4 skill-card-p4"><a class="skill-sect-link" href="#skill-section">Read more..</a></p>
+                </div>
+            </div>
+
+            <div class="skill-div col-lg-4 col-md-6 col-sm-12 d-flex justify-content-center">
+                <div class="css-skill-div">
+                    <a href="#skill-section" class="logo-anchor"><img src="static/images/home/css-logo.png" alt="xl" class="skill-logo css-logo"></a>
+                    <div class="css-card skill-card"></div>
+                    <h5 class="css-card-h5 skill-card-h5">CSS</h5>
+                    <p class="css-card-p1 skill-card-p1">Effects</p>
+                    <p class="css-card-p2 skill-card-p2">Transitions</p>
+                    <p class="css-card-p3 skill-card-p3">Scripts</p>
+                    <p class="css-card-p4 skill-card-p4"><a class="skill-sect-link" href="#skill-section">Read more..</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="skill-spacer"></div>
+
+<section id="data-section">
+    <div class="data-container">
+    </div>
+</section>
+
+<script>
+    var profileText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam porttitor dictum lacus, ut laoreet dolor."
+    var skillText = "Have a quick look at what's under the hood. If it looks interesting, you might want to look a little closer."
+    var dataText = "Who doesn't like data? Find insights into your favorite game, place or hobby."
+    var gameText = "Have a break and distract yourself with a couple browser games."
+    var projectText = "Follow my on my road to mastery! Anything interesting I am currently looking into is found here."
+    var contactText = "Locate my contact information by clicking the icon, or find it at the bottom of the page!"
+
+<!--***** Hero Card Animation *****-->
+<!--*Hero**Skill*-->
+    $( ".skill-icon" ).hover(
+        function() {$(".hero-profile-card").stop().animate({"top":"140px"});},
+        function() {$(".hero-profile-card").stop().animate({"top":"0"});}
+        );
+    $( ".skill-icon" ).hover(
+        function() {$(".hero-icon-card").stop().animate({"bottom":"140px"});},
+        function() {$(".hero-icon-card").stop().animate({"bottom":"0"});}
+        );
+    $( ".skill-icon" ).hover(
+        function() {$(".profile-card-text").stop().animate({"opacity":"0"});},
+        function() {$(".profile-card-text").stop().animate({"opacity":"1"});}
+        );
+    $( ".skill-icon" ).hover(
+        function() {$(".icon-card-text").stop().animate({"opacity":"1"});},
+        function() {$(".icon-card-text").stop().animate({"opacity":"0"});}
+        );
+    $( ".skill-icon" ).hover(
+        function() {$(".icon-card-text").text( skillText );}
+        );
+<!--*Hero**Data*-->
+    $( ".data-icon" ).hover(
+        function() {$(".hero-profile-card").stop().animate({"top":"140px"});},
+        function() {$(".hero-profile-card").stop().animate({"top":"0"});}
+        );
+    $( ".data-icon" ).hover(
+        function() {$(".hero-icon-card").stop().animate({"bottom":"140px"});},
+        function() {$(".hero-icon-card").stop().animate({"bottom":"0"});}
+        );
+    $( ".data-icon" ).hover(
+        function() {$(".profile-card-text").stop().animate({"opacity":"0"});},
+        function() {$(".profile-card-text").stop().animate({"opacity":"1"});}
+        );
+    $( ".data-icon" ).hover(
+        function() {$(".icon-card-text").stop().animate({"opacity":"1"});},
+        function() {$(".icon-card-text").stop().animate({"opacity":"0"});}
+        );
+    $( ".data-icon" ).hover(
+        function() {$(".icon-card-text").text( dataText );}
+        );
+<!--*Hero**Game*-->
+    $( ".game-icon" ).hover(
+        function() {$(".hero-profile-card").stop().animate({"top":"140px"});},
+        function() {$(".hero-profile-card").stop().animate({"top":"0"});}
+        );
+    $( ".game-icon" ).hover(
+        function() {$(".hero-icon-card").stop().animate({"bottom":"140px"});},
+        function() {$(".hero-icon-card").stop().animate({"bottom":"0"});}
+        );
+    $( ".game-icon" ).hover(
+        function() {$(".profile-card-text").stop().animate({"opacity":"0"});},
+        function() {$(".profile-card-text").stop().animate({"opacity":"1"});}
+        );
+    $( ".game-icon" ).hover(
+        function() {$(".icon-card-text").stop().animate({"opacity":"1"});},
+        function() {$(".icon-card-text").stop().animate({"opacity":"0"});}
+        );
+    $( ".game-icon" ).hover(
+        function() {$(".icon-card-text").text( gameText );}
+        );
+<!--*Hero**Project*-->
+    $( ".project-icon" ).hover(
+        function() {$(".hero-profile-card").stop().animate({"top":"140px"});},
+        function() {$(".hero-profile-card").stop().animate({"top":"0"});}
+        );
+    $( ".project-icon" ).hover(
+        function() {$(".hero-icon-card").stop().animate({"bottom":"140px"});},
+        function() {$(".hero-icon-card").stop().animate({"bottom":"0"});}
+        );
+    $( ".project-icon" ).hover(
+        function() {$(".profile-card-text").stop().animate({"opacity":"0"});},
+        function() {$(".profile-card-text").stop().animate({"opacity":"1"});}
+        );
+    $( ".project-icon" ).hover(
+        function() {$(".icon-card-text").stop().animate({"opacity":"1"});},
+        function() {$(".icon-card-text").stop().animate({"opacity":"0"});}
+        );
+    $( ".project-icon" ).hover(
+        function() {$(".icon-card-text").text( projectText );}
+        );
+<!--*Hero**Contact*-->
+    $( ".contact-icon" ).hover(
+        function() {$(".hero-profile-card").stop().animate({"top":"140px"});},
+        function() {$(".hero-profile-card").stop().animate({"top":"0"});}
+        );
+    $( ".contact-icon" ).hover(
+        function() {$(".hero-icon-card").stop().animate({"bottom":"140px"});},
+        function() {$(".hero-icon-card").stop().animate({"bottom":"0"});}
+        );
+    $( ".contact-icon" ).hover(
+        function() {$(".profile-card-text").stop().animate({"opacity":"0"});},
+        function() {$(".profile-card-text").stop().animate({"opacity":"1"});}
+        );
+    $( ".contact-icon" ).hover(
+        function() {$(".icon-card-text").stop().animate({"opacity":"1"});},
+        function() {$(".icon-card-text").stop().animate({"opacity":"0"});}
+        );
+    $( ".contact-icon" ).hover(
+        function() {$(".icon-card-text").text( contactText );}
+        );
+
+<!--***** Skill *****-->
+<!--*Python**Skill*-->
+<!--vline-->
+    $( ".python-logo" ).hover(function() {$(".python-card").stop().delay(150).animate({"top":"225px"});},
+        );
+<!--h5-->
+    $( ".python-logo" ).hover(function() {$(".python-card-h5").stop().delay(100).css({"display":"block"});},
+        );
+    $( ".python-logo" ).hover(function() {$(".python-card-h5").stop().delay(100).animate({"opacity":"1"});},
+        );
+<!--p1-->
+    $( ".python-logo" ).hover(function() {$(".python-card-p1").stop().delay(175).css({"display":"block"});},
+        );
+    $( ".python-logo" ).hover(function() {$(".python-card-p1").stop().delay(175).animate({"opacity":"1"});},
+        );
+<!--p2-->
+    $( ".python-logo" ).hover(function() {$(".python-card-p2").stop().delay(250).css({"display":"block"});},
+        );
+    $( ".python-logo" ).hover(function() {$(".python-card-p2").stop().delay(250).animate({"opacity":"1"});},
+        );
+<!--p3-->
+    $( ".python-logo" ).hover(function() {$(".python-card-p3").stop().delay(325).css({"display":"block"});},
+        );
+    $( ".python-logo" ).hover(function() {$(".python-card-p3").stop().delay(325).animate({"opacity":"1"});},
+        );
+<!--p4-->
+    $( ".python-logo" ).hover(function() {$(".python-card-p4").stop().delay(400).css({"display":"block"});},
+        );
+    $( ".python-logo" ).hover(function() {$(".python-card-p4").stop().delay(400).animate({"opacity":"1"});},
+        );
+
+<!--*HTML**Skill*-->
+<!--vline-->
+    $( ".html-logo" ).hover(function() {$(".html-card").stop().delay(150).animate({"top":"225px"});},
+        );
+<!--h5-->
+    $( ".html-logo" ).hover(function() {$(".html-card-h5").stop().delay(100).css({"display":"block"});},
+        );
+    $( ".html-logo" ).hover(function() {$(".html-card-h5").stop().delay(100).animate({"opacity":"1"});},
+        );
+<!--p1-->
+    $( ".html-logo" ).hover(function() {$(".html-card-p1").stop().delay(175).css({"display":"block"});},
+        );
+    $( ".html-logo" ).hover(function() {$(".html-card-p1").stop().delay(175).animate({"opacity":"1"});},
+        );
+<!--p2-->
+    $( ".html-logo" ).hover(function() {$(".html-card-p2").stop().delay(250).css({"display":"block"});},
+        );
+    $( ".html-logo" ).hover(function() {$(".html-card-p2").stop().delay(250).animate({"opacity":"1"});},
+        );
+<!--p3-->
+    $( ".html-logo" ).hover(function() {$(".html-card-p3").stop().delay(325).css({"display":"block"});},
+        );
+    $( ".html-logo" ).hover(function() {$(".html-card-p3").stop().delay(325).animate({"opacity":"1"});},
+        );
+<!--p4-->
+    $( ".html-logo" ).hover(function() {$(".html-card-p4").stop().delay(400).css({"display":"block"});},
+        );
+    $( ".html-logo" ).hover(function() {$(".html-card-p4").stop().delay(400).animate({"opacity":"1"});},
+        );
+
+<!--*CSS**Skill*-->
+<!--vline-->
+    $( ".css-logo" ).hover(function() {$(".css-card").stop().delay(150).animate({"top":"225px"});},
+        );
+<!--h5-->
+    $( ".css-logo" ).hover(function() {$(".css-card-h5").stop().delay(100).css({"display":"block"});},
+        );
+    $( ".css-logo" ).hover(function() {$(".css-card-h5").stop().delay(100).animate({"opacity":"1"});},
+        );
+<!--p1-->
+    $( ".css-logo" ).hover(function() {$(".css-card-p1").stop().delay(175).css({"display":"block"});},
+        );
+    $( ".css-logo" ).hover(function() {$(".css-card-p1").stop().delay(175).animate({"opacity":"1"});},
+        );
+<!--p2-->
+    $( ".css-logo" ).hover(function() {$(".css-card-p2").stop().delay(250).css({"display":"block"});},
+        );
+    $( ".css-logo" ).hover(function() {$(".css-card-p2").stop().delay(250).animate({"opacity":"1"});},
+        );
+<!--p3-->
+    $( ".css-logo" ).hover(function() {$(".css-card-p3").stop().delay(325).css({"display":"block"});},
+        );
+    $( ".css-logo" ).hover(function() {$(".css-card-p3").stop().delay(325).animate({"opacity":"1"});},
+        );
+<!--p4-->
+    $( ".css-logo" ).hover(function() {$(".css-card-p4").stop().delay(400).css({"display":"block"});},
+        );
+    $( ".css-logo" ).hover(function() {$(".css-card-p4").stop().delay(400).animate({"opacity":"1"});},
+        );
+
+</script>
+
+
+{% endblock %}

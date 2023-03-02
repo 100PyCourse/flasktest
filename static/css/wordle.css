@@ -1,0 +1,80 @@
+/* ********** Variables ********** */
+:root {
+  --dark: rgba(20, 27, 37, 1);
+  --dark-l: rgba(20, 27, 37, 0.75);
+  --middle: rgba(38, 49, 64, 1);
+  --light: rgba(98, 123, 158, 1);
+  --white: #ffffff;
+  --black: #000000;
+}
+#title-section {
+    padding-bottom: 50px;
+    background-color: var(--middle);
+    color: var(--black);
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+#first-section {
+    padding-top: 125px;
+    padding-bottom: 125px;
+    background-color: var(--light);
+    color: var(--black);
+}
+#second-section {
+    height: 200px;
+    background-color: var(--dark);
+}
+.header {
+    padding-top: 125px;
+}
+.start {
+    font-size: 5rem;
+    font-weight: bold;
+}
+.header-text {
+    padding-right: 25px;
+}
+.header-image {
+    padding-left: 25px;
+    padding-bottom: 75px;
+    text-align: center;
+}
+.play-button-container {
+    background-color: var(--dark);
+    border-radius: 30px;
+}
+.play-button-container:hover {
+    background-color: var(--dark-l);
+}
+.play-button {
+    font-size: 1.5rem;
+    border: none;
+}
+.card {
+    background-color: var(--dark);
+/*    height: 100px;*/
+}
+.text-white-50 {
+    font-size: 1.4rem;
+}
+.scores-card-height {
+    height: 250px;
+}
+/* ********** Color transform ********** */
+.transform-middle-light {
+    height: 75px;
+    background: linear-gradient(var(--middle), var(--light));
+}
+.transform-light-dark {
+    height: 75px;
+    background: linear-gradient(var(--light), var(--dark));
+}
+/* ********** Media ********** */
+@media only screen and (max-width: 992px) {
+    .header {
+        text-align: center;
+    }
+}
+
+
+

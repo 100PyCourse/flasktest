@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}
+Wordle
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
+
+{% block content %}
+
+<div class="transform-middle-light">
+</div>
+
+<section id="game-section">
+    <div class="container game-container">
+        {% if game_win %}
+            <h1>You win!</h1>
+        {% elif game_loss %}
+            <h1>You lose!</h1>
+        {% endif %}
+
+        <div class="game">
+            {% for div in wordle_divs %}
+            <div class="game-box" style="background-color:{{ div[1] }};">
+                {{ div[0] }}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="container message-container">
+        {% for message in get_flashed_messages() %}
+            <div class="alert alert-warning" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="container submit-container">
+        <form method="POST" action="" novalidate>
+            {{ wordle_form.hidden_tag() }}
+
+            <div class="form-group pt-0 pb-3">
+                {% for error in wordle_form.errors["guess"] %}
+                <p class="text-danger mb-1"><strong>{{ error }}</strong></p>
+                {% endfor %}
+
+                {% if game_win %}
+                {% elif game_loss %}
+                {% else %}
+
+                {% if not get_flashed_messages() %}
+                <p class="text-white-50 mb-1">Your 5-letter-word!</p>
+                {% endif %}
+
+                {{ wordle_form.guess(class="form-control form-control-lg") }}
+                {% endif %}
+            </div>
+
+            {% if game_win %}
+            <div class="container play-button-container">
+                <a href="{{ url_for('play_wordle') }}" class="btn w-100 fw-bold pt-3 pb-3 text-uppercase text-white play-button">
+                    Play again!
+                </a>
+            </div>
+            {% elif game_loss %}
+            <div class="container play-button-container">
+                <a href="{{ url_for('play_wordle') }}" class="btn w-100 fw-bold pt-3 pb-3 text-uppercase text-white play-button">
+                    Play again!
+                </a>
+            </div>
+            {% else %}
+            <div class="form-group py-3">
+                {{ wordle_form.submit(class="btn btn-outline-light btn-lg px-5") }}
+            </div>
+            {% endif %}
+        </form>
+    </div>
+</section>
+
+<div class="transform-light-dark">
+</div>
+
+<section id="second-section">
+</section>
+{% endblock %}

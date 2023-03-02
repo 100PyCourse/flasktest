@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block title %}
+Numbers
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
+
+{% block content %}
+
+<div class="transform-middle-light">
+</div>
+
+<section id="game-section">
+
+
+    <div class="container numbers-container">
+
+        <div class="numbers-scores">
+            <ul>
+                {% for time in numbers_highscores_self %}
+                <li>{{ time.numbers_time }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="container game-container">
+            <div class="game" id="allBoxes">
+                {% for div in numbers_divs %}
+                <div class="game-box">
+                    <a id="{{ div[1] }}"><p>{{ div[0] }}</p></a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="numbers-highscores">
+            <ul>
+                {% for time in numbers_highscores_all %}
+                <li>{{ time.numbers_time }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+    </div>
+
+
+    <div class="container submit-container">
+
+        <div class="start-container">
+            <div class="game-start" id="test">
+                <a href="#" id="boxStart">1</a>
+            </div>
+        </div>
+
+
+        <form method="POST" action="" novalidate>
+            {{ numbers_form.hidden_tag() }}
+
+            <div class="play-button-container" id="boxStop">
+                {{ numbers_form.submit(class="btn btn-outline-light btn-lg px-5") }}
+            </div>
+
+        </form>
+
+        <div class="play-button-container">
+            <a href="{{ url_for('numbers') }}" class="btn btn-outline-light btn-lg px-5">
+                Reset!
+            </a>
+        </div>
+
+    </div>
+</section>
+
+<div class="transform-light-dark">
+</div>
+
+<section id="second-section">
+</section>
+
+<script>
+    $('#boxStart').on('click', function() {
+        $('#test').css('display', 'none');
+        $('#boxB').css('display', 'inline-block');
+    });
+    $('#boxB').on('click', function() {
+        $('#boxB').css('display', 'none');
+        $('#boxC').css('display', 'inline-block');
+    });
+    $('#boxC').on('click', function() {
+        $('#boxC').css('display', 'none');
+        $('#boxD').css('display', 'inline-block');
+    });
+    $('#boxD').on('click', function() {
+        $('#boxD').css('display', 'none');
+        $('#boxE').css('display', 'inline-block');
+    });
+    $('#boxE').on('click', function() {
+        $('#boxE').css('display', 'none');
+        $('#boxF').css('display', 'inline-block');
+    });
+    $('#boxF').on('click', function() {
+        $('#boxF').css('display', 'none');
+        $('#boxG').css('display', 'inline-block');
+    });
+    $('#boxG').on('click', function() {
+        $('#boxG').css('display', 'none');
+        $('#boxH').css('display', 'inline-block');
+    });
+    $('#boxH').on('click', function() {
+        $('#boxH').css('display', 'none');
+        $('#boxI').css('display', 'inline-block');
+    });
+    $('#boxI').on('click', function() {
+        $('#boxI').css('display', 'none');
+        $('#boxStop').css('display', 'inline-block');
+    });
+
+
+
+</script>
+
+{% endblock %}

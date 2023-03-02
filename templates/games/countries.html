@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}
+Countries
+{% endblock %}
+
+{% block scripts %}
+    {% if scrollToAnchor %}
+        <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.location.hash = '#{{ scrollToAnchor }}';
+        });
+
+        </script>
+        {% endif %}
+{% endblock %}
+
+{% block content %}
+<section id="title-section">
+    <div class="container title-container">
+        <div class="row">
+            <div class="header header-text col-lg-6 md-12">
+
+                <h1 class="start">Show</h1>
+                <br>
+                <h4>off your knowledge of the European continent. Guess which country has the largest landmass and see
+                    if you can beat your friends high-score.</h4>
+            </div>
+
+            <div class="header header-image col-lg-6 md-12">
+                <img class="europe-logo" src="../static/images/games/countries/countries_logo.png">
+            </div>
+        </div>
+    </div>
+
+    <div id="country-location" class="container card-container">
+        <div class="row">
+            <div class="col-md-6 card-width">
+                <div class="card text-white" style="border-radius: 1rem;">
+                    <div class="card-body p-5 text-center">
+                        <div class="mb-md-3 mt-md-4">
+
+                            <h2 class="fw-bold mb-5 text-uppercase">
+                                {{ name1 }}
+                            </h2>
+
+                            <div>
+                                <img class="country-image mb-2" src="{{ path1 }}">
+                            </div>
+
+                            <p class="text-white-50 mb-0">
+                                Size:
+                            </p>
+
+                            <p class="country-size mb-2 pb-3">
+                                {{ size1 }} km<sup>2</sup>
+                            </p>
+
+                            <p class="text-white-50 mb-0 pb-0">
+                                Current streak:
+                            </p>
+
+                            <p class="country-streak mb-2 pb-0">
+                                {{ country_streak }}
+                            </p>
+
+                            <p class="text-white-50 mb-0 pb-0">
+                                Record:
+                            </p>
+
+                            <p class="country-streak mb-2">
+                                {{ country_record }}
+                            </p>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 card-width">
+                <div class="card text-white" style="border-radius: 1rem;">
+                    <div class="card-body p-5 text-center">
+                        <div class="mb-md-3 mt-md-4">
+
+                            <h2 class="fw-bold mb-5 text-uppercase">{{ name2 }}</h2>
+
+                            <div class="mb-4">
+                                <img class="country-image"
+                                     src="{{ path2 }}">
+                            </div>
+
+                            <form method="POST" action="" novalidate>
+                                {{ country_form.hidden_tag() }}
+
+                                <div class="form-group">
+                                    <p class="text-white-50">{{ country_form.select.label }}</p>
+                                    {{ country_form.select(class="form-control form-control-lg") }}
+
+                                    <div class="form-group mb-3 mt-5">
+                                        {{ country_form.submit(class="btn btn-outline-light btn-lg px-5") }}
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="transform-middle-light">
+</div>
+
+<section id="first-section">
+</section>
+
+<div class="transform-light-dark">
+</div>
+<section id="second-section">
+
+</section>
+{% endblock %}

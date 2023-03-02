@@ -1,0 +1,92 @@
+/* ********** Variables ********** */
+:root {
+  --dark: rgba(20, 27, 37, 1);
+  --middle: rgba(38, 49, 64, 1);
+  --light: rgba(98, 123, 158, 1);
+  --white: #ffffff;
+  --black: #000000;
+}
+#title-section {
+/*    padding-top: 125px;*/
+    padding-bottom: 125px;
+    background-color: var(--middle);
+    color: var(--black);
+    background-image: url("../images/games/countries/europe.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+#first-section {
+    padding-top: 50px;
+    padding-bottom: 50px;
+    /*padding-bottom: 25px;*/
+    background-color: var(--light);
+    color: var(--black);
+}
+#second-section {
+    height: 200px;
+    background-color: var(--dark);
+}
+.header {
+    padding-top: 125px;
+}
+.start {
+    font-size: 5rem;
+    font-weight: bold;
+}
+.header-text {
+    padding-right: 25px;
+}
+.header-image {
+    padding-left: 25px;
+    padding-bottom: 75px;
+    text-align: center;
+}
+.title-container {
+/*    padding-bottom: 50px;*/
+}
+#country-location {
+    padding-top: 100px;
+}
+.card-container {
+    padding-bottom: 50px;
+}
+.card {
+    background-color: var(--dark);
+    height: 700px;
+}
+.card-width {
+    width: 500px;
+    margin: auto;
+    padding-bottom: 25px;
+}
+.country-image {
+    border-radius: 10%;
+    width: 200px;
+    height: 250px;
+}
+.country-size {
+    font-size: 1.8rem;
+    color: var(--white);
+}
+.country-streak {
+    font-size: 1.8rem;
+    color: var(--white);
+}
+/* ********** Color transform ********** */
+.transform-middle-light {
+    height: 75px;
+    background: linear-gradient(var(--middle), var(--light));
+}
+.transform-light-dark {
+    height: 75px;
+    background: linear-gradient(var(--light), var(--dark));
+}
+/* ********** Media ********** */
+@media only screen and (max-width: 992px) {
+    .header {
+        text-align: center;
+    }
+}
+
+
+

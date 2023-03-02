@@ -1,0 +1,73 @@
+{% extends "landing_base.html" %}}
+
+{% block landing_title %}
+Login
+{% endblock %}
+
+{% block landing_content %}
+<section class="login-height gradient-custom">
+
+    <div class="container card-container">
+        <div class="row justify-content-center card-items">
+
+            <div id="login-card" class="col-lg-4 col-md-8 col-sm-10 login-div">
+                <div class="card bg-dark text-white" style="border-radius: 1rem;">
+                    <div class="card-body p-5 text-center">
+                        <div class="container">
+                            {% for message in get_flashed_messages() %}
+                            <div class="alert alert-secondary" role="alert">
+                                {{ message }}
+                            </div>
+                            {% endfor %}
+
+                            <h2 class="fw-bold mb-2 text-uppercase">Login</h2>
+                            <p class="text-white-50 mb-5">Please enter your login details!</p>
+
+                            <div class="form-outline form-white mb-4">
+                                <form method="POST" action="" novalidate>
+                                    {{ login_form.hidden_tag() }}
+
+                                    <div class="form-group py-3">
+                                        {% for error in login_form.errors["email"] %}
+                                            <p class="text-danger mb-1"><strong>{{ error }}</strong></p>
+                                        {% endfor %}
+
+                                        <p class="text-white-50 mb-1">{{ login_form.email.label }}</p>
+                                        {{ login_form.email(class="form-control form-control-lg") }}
+                                    </div>
+
+                                    <div class="form-group py-3">
+                                        {% for error in login_form.errors["password"] %}
+                                            <p class="text-danger mb-1"><strong>{{ error }}</strong></p>
+                                        {% endfor %}
+
+                                        <p class="text-white-50 mb-1">{{ login_form.password.label }}</p>
+                                        {{ login_form.password(class="form-control form-control-lg") }}
+                                    </div>
+
+                                    <div class="form-group pt-3">
+                                        {{ login_form.submit(class="btn btn-outline-light btn-lg px-5") }}
+                                    </div>
+                                </form>
+                            </div>
+
+                            <p class="small mb-5 pb-lg-2"><a class="text-white-50"
+                                                             href="{{ url_for('request_reset')  }}">Forgot
+                                password?</a></p>
+                        </div>
+
+                        <div>
+                            <p class="mb-0">Don't have an account? <a href="{{ url_for('register') }}" id="getRegister"
+                                                                      class="text-white-50 fw-bold">Sign Up</a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</section>
+
+{% endblock %}

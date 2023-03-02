@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="74.487457mm"
+   height="42.65163mm"
+   viewBox="0 0 74.487458 42.651628"
+   version="1.1"
+   id="svg5"
+   inkscape:export-filename="wordle_background.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+   sodipodi:docname="wordle_background.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="0.84096521"
+     inkscape:cx="274.68437"
+     inkscape:cy="72.5357"
+     inkscape:window-width="1680"
+     inkscape:window-height="987"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2">
+    <rect
+       x="247.20332"
+       y="381.73575"
+       width="421.25464"
+       height="253.08913"
+       id="rect113" />
+    <filter
+       inkscape:label="Ink Paint"
+       inkscape:menu="Textures"
+       inkscape:menu-tooltip="Ink paint on paper with some turbulent color shift"
+       height="1.7258982"
+       y="-0.36294911"
+       width="1.1667632"
+       x="-0.083381623"
+       style="color-interpolation-filters:sRGB"
+       id="filter4072">
+      <feTurbulence
+         type="fractalNoise"
+         baseFrequency="0.07"
+         numOctaves="4"
+         result="result0"
+         id="feTurbulence4060" />
+      <feDisplacementMap
+         in2="result0"
+         in="SourceGraphic"
+         xChannelSelector="R"
+         yChannelSelector="G"
+         scale="10"
+         result="result2"
+         id="feDisplacementMap4062" />
+      <feBlend
+         result="result5"
+         in="result2"
+         mode="multiply"
+         in2="result2"
+         id="feBlend4064" />
+      <feGaussianBlur
+         stdDeviation="10"
+         in="result2"
+         result="result4"
+         id="feGaussianBlur4066" />
+      <feComposite
+         operator="arithmetic"
+         in2="result4"
+         in="result0"
+         k3="0.5"
+         k1="2"
+         result="result6"
+         id="feComposite4068"
+         k2="0"
+         k4="0" />
+      <feComposite
+         operator="in"
+         in2="result5"
+         in="result6"
+         result="result7"
+         id="feComposite4070" />
+    </filter>
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath4128">
+      <rect
+         style="opacity:1;fill:#141b25;fill-opacity:0.698246;stroke:#ff0000;stroke-width:0"
+         id="rect4130"
+         width="317.68976"
+         height="196.28969"
+         x="45.705189"
+         y="448.58255"
+         transform="rotate(-22.053896)" />
+    </clipPath>
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0.82498228,-22.293868)">
+    <text
+       xml:space="preserve"
+       transform="matrix(0.21715121,0.01985807,-0.01367688,0.3152915,-43.494576,-99.110594)"
+       id="text111"
+       style="white-space:pre;shape-inside:url(#rect113);display:inline;opacity:1;fill:#141b25;fill-opacity:0.698246;stroke:#ff0000;stroke-width:0;filter:url(#filter4072)"
+       clip-path="url(#clipPath4128)"><tspan
+         x="247.20312"
+         y="459.58848"
+         id="tspan4150"><tspan
+           style="font-size:85.3333px;-inkscape-font-specification:'sans-serif, Normal'"
+           id="tspan4148">Wordle</tspan></tspan></text>
+  </g>
+</svg>

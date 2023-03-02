@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block styles %}
+<link rel="stylesheet" href="../static/css/wordle.css">
+{% endblock %}
+
+{% block title %}
+Wordle
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
+
+{% block content %}
+<section id="title-section">
+    <div class="container title-container">
+        <div class="row">
+            <div class="header header-text col-lg-6 md-12">
+
+                <h1 class="start">Guess</h1>
+                <br>
+                <h4>the right word in 6 tries! Each guess must be a valid 5-letter word and tiles will change color
+                    corresponding to their placement.</h4>
+            </div>
+
+            <div class="header header-image col-lg-6 md-12">
+                <img class="wordle-logo" src="../static/images/games/wordle/wordle_logo.png">
+            </div>
+        </div>
+    </div>
+
+    <div class="container play-button-container">
+        <a href="{{ url_for('play_wordle') }}" class="btn w-100 fw-bold pt-3 pb-3 text-uppercase text-white play-button">
+            Play
+        </a>
+    </div>
+
+</section>
+
+<div class="transform-middle-light">
+</div>
+
+<section id="first-section">
+    <div class="container scores-container">
+        <div class="row">
+            <div class="col-lg-4 col-md-6 col-sm-12">
+                <div class="card text-white" style="border-radius: 1rem;">
+                    <div class="card-body p-5 text-center">
+                        <div class="score-card mb-md-3 mt-md-4 scores-card-height">
+
+                            <h2 class="fw-bold mb-5 text-uppercase">
+                                Best average
+                            </h2>
+
+                            <p class="text-white-50 mb-0">
+                                <!--{{ average1 }}-->Player1 2.4
+                            </p>
+
+                            <p class="text-white-50 mb-0">
+                                <!--{{ average2 }}-->Player2 2.7
+                            </p>
+
+                            <p class="text-white-50 mb-0">
+                                <!--{{ average3 }}-->Player3 3.0
+                            </p>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6 col-sm-12 scores-card-width">
+                <div class="card text-white" style="border-radius: 1rem;">
+                    <div class="card-body p-5 text-center">
+                        <div class="mb-md-3 mt-md-4 scores-card-height">
+
+                            <h2 class="fw-bold mb-5 text-uppercase">
+                                Most wins
+                            </h2>
+
+                            <p class="text-white-50 mb-0">
+                                <!--{{ most1 }}-->Player1 12
+                            </p>
+
+                            <p class="text-white-50 mb-0">
+                                <!--{{ most2 }}-->Player2 11
+                            </p>
+
+                            <p class="text-white-50 mb-0">
+                                <!--{{ most3 }}-->Player3 9
+                            </p>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-lg-4 col-md-6 col-sm-12 scores-card-width">
+                <div class="card text-white" style="border-radius: 1rem;">
+                    <div class="card-body p-5 text-center">
+                        <div class="mb-md-3 mt-md-4 scores-card-height">
+
+                            <h2 class="fw-bold mb-5 text-uppercase">
+                                Least fails
+                            </h2>
+
+                            <p class="text-white-50 mb-0">
+                                <!--{{ least1 }}-->Player1 1
+                            </p>
+
+                            <p class="text-white-50 mb-0">
+                                <!--{{ least2 }}-->Player2 3
+                            </p>
+
+                            <p class="text-white-50 mb-0">
+                                <!--{{ least3 }}-->Player4 4
+                            </p>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</section>
+
+<div class="transform-light-dark">
+</div>
+<section id="second-section">
+
+</section>
+{% endblock %}

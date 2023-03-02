@@ -1,0 +1,86 @@
+/* ********** Variables ********** */
+:root {
+  --dark: rgba(20, 27, 37, 1);
+  --middle: rgba(38, 49, 64, 1);
+  --light: rgba(98, 123, 158, 1);
+  --white: #ffffff;
+  --black: #000000;
+  --grey: rgba(38, 49, 64, 0.3);
+  --green: rgba(0, 165, 0, 0.3);
+  --yellow: rgba(255, 215, 0, 0.3);
+}
+#game-section {
+    background-color: var(--light);
+}
+#second-section {
+    height: 200px;
+    background-color: var(--dark);
+}
+.game-container {
+    padding-top: 25px;
+    padding-bottom: 20px;
+    text-align: center;
+}
+.game {
+    width: 425px;
+    height: 425px;
+    margin: auto;
+}
+.game div {
+    width: 75px;
+    height: 75px;
+    outline: 2px solid;
+    float: left;
+    margin: 5px;
+}
+.game-box {
+    padding-top: 5px;
+    font-size: 2.5rem;
+}
+.message-container {
+    text-align: center;
+    margin: auto;
+    width: 250px;
+}
+.submit-container {
+    width: 200px;
+    text-align: center;
+    padding-bottom: 50px;
+}
+.play-button-container a {
+    background-color: var(--middle);
+}
+.play-button-container a:hover {
+    color: var(--white);
+    opacity: 0.8;
+}
+.btn {
+    background-color: var(--middle);
+}
+.btn:hover {
+    background-color: var(--middle);
+    color: var(--white);
+    opacity: 0.8;
+}
+/* ********** Color transform ********** */
+.transform-middle-light {
+    height: 40px;
+    background: linear-gradient(var(--middle), var(--light));
+}
+.transform-light-dark {
+    height: 40px;
+    background: linear-gradient(var(--light), var(--dark));
+}
+.transform-dark-middle {
+    height: 50px;
+    background: linear-gradient(var(--dark), var(--middle));
+}
+/* ********** Media ********** */
+@media only screen and (max-width: 992px) {
+    .header {
+        text-align: center;
+    }
+}
+
+
+

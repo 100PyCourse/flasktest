@@ -1,0 +1,187 @@
+/* ********** Variables ********** */
+:root {
+  --dark: rgba(20, 27, 37, 1);
+  --middle: rgba(38, 49, 64, 1);
+  --light: rgba(98, 123, 158, 1);
+  --white: #ffffff;
+  --black: #000000;
+  --grey: rgba(38, 49, 64, 0.3);
+}
+
+/* ********** Sections ********** */
+#game-section {
+    background-color: var(--light);
+    min-height: 700px;
+}
+#second-section {
+    height: 200px;
+    background-color: var(--dark);
+}
+
+/* ********** Game ********** */
+.game-container {
+    display: inline-block;
+    text-align: center;
+}
+.game {
+    width: 425px;
+    height: 425px;
+    margin: auto;
+}
+.game div {
+    width: 75px;
+    height: 75px;
+    float: left;
+    margin: 5px;
+}
+.game-box {
+    padding-top: 5px;
+    font-size: 2.5rem;
+}
+
+#boxStart {
+    display: inline-block;
+    text-decoration: none;
+    width: 100%;
+    height: 100%;
+    color: var(--black);
+}
+#boxStop {
+    display: none;
+    padding-bottom: 20px;
+}
+.game-start {
+    text-align: center;
+    width: 75px;
+    height: 75px;
+    padding-top: 5px;
+    font-size: 2.5rem;
+    margin: auto;
+}
+
+
+
+/* ********** Buttons ********** */
+.submit-container {
+    width: 200px;
+    text-align: center;
+    padding-bottom: 50px;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+}
+.btn {
+    background-color: var(--middle);
+    width: 150px;
+}
+.btn:hover {
+    background-color: var(--middle);
+    color: var(--white);
+    opacity: 0.8;
+}
+
+/* ********** Scores ********** */
+.numbers-container {
+    display: flex;
+    padding-top: 35px;
+    padding-bottom: 20px;
+}
+.numbers-scores {
+    background-color: var(--grey);
+    opacity: 0.7;
+    width: 300px;
+    height: 425px;
+    border-radius: 25px 30px 100px 30px;
+    margin-left: 75px;
+    padding-right: 75px;
+}
+.numbers-highscores {
+    background-color: var(--grey);
+    opacity: 0.7;
+    width: 300px;
+    height: 425px;
+    border-radius: 30px 25px 30px 100px;
+    margin-right: 75px;
+    padding-left: 75px;
+}
+
+/* ********** Boxes ********** */
+#boxB {
+    display: none;
+    text-decoration: none;
+    width: 100%;
+    height: 100%;
+    color: var(--black);
+}
+#boxC {
+    display: none;
+    text-decoration: none;
+    width: 100%;
+    height: 100%;
+    color: var(--black);
+}
+#boxD {
+    display: none;
+    text-decoration: none;
+    width: 100%;
+    height: 100%;
+    color: var(--black);
+}
+#boxE {
+    display: none;
+    text-decoration: none;
+    width: 100%;
+    height: 100%;
+    color: var(--black);
+}
+#boxF {
+    display: none;
+    text-decoration: none;
+    width: 100%;
+    height: 100%;
+    color: var(--black);
+}
+#boxG {
+    display: none;
+    text-decoration: none;
+    width: 100%;
+    height: 100%;
+    color: var(--black);
+}
+#boxH {
+    display: none;
+    text-decoration: none;
+    width: 100%;
+    height: 100%;
+    color: var(--black);
+}
+#boxI {
+    display: none;
+    text-decoration: none;
+    width: 100%;
+    height: 100%;
+    color: var(--black);
+}
+
+/* ********** Color transform ********** */
+.transform-middle-light {
+    height: 40px;
+    background: linear-gradient(var(--middle), var(--light));
+}
+.transform-light-dark {
+    height: 40px;
+    background: linear-gradient(var(--light), var(--dark));
+}
+.transform-dark-middle {
+    height: 50px;
+    background: linear-gradient(var(--dark), var(--middle));
+}
+/* ********** Media ********** */
+@media only screen and (max-width: 992px) {
+    .header {
+        text-align: center;
+    }
+}
+
+
+
