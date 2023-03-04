@@ -10,7 +10,7 @@ class Wordle:
     """
     Class containing wordle game info.
     """
-    df_words = pd.read_csv("static/data/games/wordle/5_letter_words.csv")
+    df_words = pd.read_csv("flasktest/static/data/games/wordle/5_letter_words.csv")
     word_list = df_words.Word.tolist()
 
     def __init__(self, answer):

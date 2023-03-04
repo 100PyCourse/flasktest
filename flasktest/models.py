@@ -1,23 +1,8 @@
-from flask import Flask
-from flask_login import UserMixin
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import relationship
-import os
-
 import random
 
-
-db = SQLAlchemy()
-
-flask_key = os.environ["flask_key"]
-sqlite_uri = os.environ["sqlite_uri"]
-
-app = Flask(__name__)
-app.config["SECRET_KEY"] = flask_key
-app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{sqlite_uri}\\website_database.db"
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-
-db.init_app(app)
+from flasktest import db
+from flask_login import UserMixin
+from sqlalchemy.orm import relationship
 
 
 class User(db.Model, UserMixin):
@@ -100,7 +85,7 @@ def add_new_wordle(user_id, answer):
 
 class NumbersData(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))# relationship
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))  # relationship
     numbers_start = db.Column(db.Float(), nullable=False)
     numbers_stop = db.Column(db.Float(), nullable=True, default=-1)
     numbers_time = db.Column(db.Float(), nullable=True, default=-1)
@@ -115,8 +100,3 @@ class APIData(db.Model):
     api_name = db.Column(db.String(30), unique=True, nullable=False)
     last_used = db.Column(db.Integer, unique=False, nullable=True)
     timer = db.Column(db.Integer, unique=False, nullable=True)
-
-
-if __name__ == "__main__":
-    with app.app_context():
-        db.create_all()

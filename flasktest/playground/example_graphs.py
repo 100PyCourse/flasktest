@@ -24,7 +24,7 @@ kills.update_layout(
         color=color,
     ),
 )
-kills.write_image("static/images/data/pubg/example_kills.png", scale=2)
+kills.write_image("flasktest/static/images/data/pubg/example_kills.png", scale=2)
 
 damage = px.bar(
     data_frame=df_example, # which df  to use
@@ -45,7 +45,7 @@ damage.update_layout(
         color=color,
     ),
 )
-damage.write_image("static/images/data/pubg/example_damage.png", scale=2)
+damage.write_image("flasktest/static/images/data/pubg/example_damage.png", scale=2)
 
 distance = px.bar(
     data_frame=df_example, # which df  to use
@@ -66,4 +66,4 @@ distance.update_layout(
         color=color,
     ),
 )
-distance.write_image("static/images/data/pubg/example_distance.png", scale=2)
+distance.write_image("flasktest/static/images/data/pubg/example_distance.png", scale=2)

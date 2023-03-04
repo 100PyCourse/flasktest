@@ -193,7 +193,7 @@ def create_dataframe(player_stats, name, mode):
     df_player["Distance"] = player_stats[5]
     df_player["Distance_g"] = df_player.Distance / df_player.Games
 
-    df_player.to_csv(f"static/data/api/pubg/df_{name}_{mode}.csv", index=False)
+    df_player.to_csv(f"flasktest/static/data/api/pubg/df_{name}_{mode}.csv", index=False)
 
     return df_player
 
@@ -228,7 +228,7 @@ def create_kills_bar(dataframe, name, mode):
             "color": color,
         },
     )
-    kills_bar.write_image("static/images/api/pubg/current_kills.png", scale=2)
+    kills_bar.write_image("flasktest/static/images/api/pubg/current_kills.png", scale=2)
     return "../static/images/api/pubg/current_kills.png"
 
 
@@ -263,7 +263,7 @@ def create_damage_bar(dataframe, name, mode):
         },
     )
 
-    damage_bar.write_image("static/images/api/pubg/current_damage.png", scale=2)
+    damage_bar.write_image("flasktest/static/images/api/pubg/current_damage.png", scale=2)
     return "../static/images/api/pubg/current_damage.png"
 
 
@@ -298,6 +298,6 @@ def create_distance_bar(dataframe, name, mode):
         },
     )
 
-    distance_bar.write_image("static/images/api/pubg/current_distance.png", scale=2)
+    distance_bar.write_image("flasktest/static/images/api/pubg/current_distance.png", scale=2)
 
     return "../static/images/api/pubg/current_distance.png"
