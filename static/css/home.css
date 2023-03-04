@@ -1,6 +1,7 @@
 :root {
     --dark: rgba(34, 40, 49, 1);
     --middle: rgba(57, 62, 70, 1);
+    --light-middle: rgba(57, 62, 70, 0.8);
     --light: rgba(210, 216, 228, 1);
     --orange: rgba(214, 90, 49, 1);
     --black: rgba(0, 0, 0, 1);
@@ -178,15 +179,16 @@ h1 {
 .skill-logo:hover {
     bottom: 0px;
 }
-.skill-div h5 {
+.skill-div h3 {
     margin-top: 10px;
     margin-bottom: 30px;
     color: var(--black);
+    font-size: 1.2rem;
 }
 .skill-div p {
     color: var(--black);
 }
-.skill-card-h5,
+.skill-card-h3,
 .skill-card-p1,
 .skill-card-p2,
 .skill-card-p3,
@@ -195,11 +197,11 @@ h1 {
     opacity: 0;
     transition: opacity 0.3s;
 }
-.skill-card-h5 {
+.skill-card-h3 {
     font-weight: 600;
 }
 .skill-card-p4 {
-    font-weight: 400;
+    font-weight: 300;
 }
 .skill-sect-link {
     text-decoration: none;
@@ -232,8 +234,90 @@ h1 {
 /*General******** Data *********/
 #data-section {
     background-color: var(--orange);
-    height: 500px;
     width: 100%;
-    opacity: 0.8;
+    height: 250px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
+
+.data-container {
+    width: 80%;
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.data-section-text {
+    min-width: 200px;
+    width: 33.3%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.data-section-title {
+    font-size: 3rem;
+    margin: 0;
+}
+
+.data-section-subtitle {
+    opacity: 0.7;
+    margin-bottom: 25px;
+}
+
+.data-sneak-peak {
+    text-decoration: underline;
+    color: white;
+}
+
+.data-section-image {
+    width: 100%;
+    height: 100%;
+    filter: invert(21%) sepia(25%) saturate(283%) hue-rotate(177deg) brightness(94%) contrast(87%);
+}
+
+.data-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+/*Media******** Data *********/
+@media screen and (max-width: 768px) {
+    .data-section-image { width: 75% }
+    .data-section-image { height: 65% }
+}
+@media screen and (max-width: 576px) {
+    .data-image-right { display: none }
+    .data-section-image { width: 80% }
+    .data-section-image { height: 80% }
+}
+
+
+/*General******** Game *********/
+#game-section {
+    background-color: var(--middle);
+    padding: 100px 0;
+}
+
+.game-container {
+    width: 80%;
+    margin: auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 25px;
+    align-items: center;
+    justify-content: center;
+}
+
+.test {
+    border-radius: 8%;
+}
+
+
 

@@ -203,6 +203,11 @@ def enter_reset():
             flash("Email and/or reset code incorrect!")
             return render_template("/landing/enter_reset.html", reset_form=reset_form)
 
+        # User did not request a reset
+        if user.reset_key == 000000:
+            flash("Unauthorised request!")
+            return render_template("/landing/enter_reset.html", reset_form=reset_form)
+
         # Incorrect reset code
         if not user.reset_key == reset_form.reset_code.data:
             flash("Incorrect code!")
@@ -267,7 +272,7 @@ def pubg():
             flash(f"API on cooldown. {(pubg_data.last_used + 60) - math.floor(time.time())}"
                   f" seconds left.")
             return render_template("/api/pubg.html", pubg_form=pubg_form, kills_img=kills_img,
-                                   damage_img=damage_img,distance_img=distance_img,
+                                   damage_img=damage_img, distance_img=distance_img,
                                    scrollToAnchor="pubg-section", page="pubg")
 
         player_id = get_player_id(name)
@@ -284,8 +289,8 @@ def pubg():
         # Check if player exists
         if player_id in (400, 404):
             flash("Player not found!")
-            return render_template("/api/pubg.html", pubg_form=pubg_form, kills_img=kills_img
-                                   , damage_img=damage_img, distance_img=distance_img,
+            return render_template("/api/pubg.html", pubg_form=pubg_form, kills_img=kills_img,
+                                   damage_img=damage_img, distance_img=distance_img,
                                    scrollToAnchor="pubg-section", page="pubg")
         # Check for unexpected error
         if player_id == 0:
