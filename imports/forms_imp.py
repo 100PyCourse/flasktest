@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, EmailField, PasswordField, SelectField
-from wtforms.validators import DataRequired, Length, Email
+from wtforms.validators import DataRequired, Length, Email, EqualTo
 
 
 # ----------------------- Landing forms ----------------------- #
@@ -27,7 +27,8 @@ class RegisterForm(FlaskForm):
                               render_kw={"placeholder": "Re-type password"},
                               validators=[DataRequired(message="Password is required"),
                                           Length(min=8, max=24,
-                                                 message="Password must be 8 - 24 char")])
+                                                 message="Password must be 8 - 24 char"),
+                                          EqualTo("password")])
     submit = SubmitField(label="Register")
 
 
@@ -81,7 +82,8 @@ class ResetForm(FlaskForm):
     password2 = PasswordField(label="Password", render_kw={"placeholder": "Password"},
                               validators=[DataRequired(message="Password is required"),
                                           Length(min=8, max=24,
-                                                 message="Password must be 8 - 24 char")])
+                                                 message="Password must be 8 - 24 char"),
+                                          EqualTo("password")])
     submit = SubmitField(label="Reset")
 
 
