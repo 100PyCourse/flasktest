@@ -1,10 +1,11 @@
 import random
 
-from flasktest import db
+from flasktest import db, bcrypt
 from flask_login import UserMixin
 from sqlalchemy.orm import relationship
 
 
+# ----------------------- Models ----------------------- #
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(75), unique=True, nullable=False)
@@ -52,37 +53,6 @@ class WordleData(db.Model):
                f"game_state={self.wordle_game_state}, answer={self.wordle_answer})"
 
 
-def add_test_user(email, pw_hash):
-    test_user = User(
-        email=email,
-        username="tester",
-        password=pw_hash,
-        reset_key=000000,
-    )
-    return test_user
-
-
-def add_new_countries(user_id):
-    new_countries = CountriesData(
-        user_id=user_id,
-        country1 = random.randint(1, 30),
-        country2 = random.randint(1, 30),
-        country_streak=0,
-        country_record=0,
-    )
-    return new_countries
-
-
-def add_new_wordle(user_id, answer):
-    new_wordle = WordleData(
-        user_id=user_id,
-        wordle_answer=answer,
-        wordle_round=0,
-        wordle_game_state="busy",
-    )
-    return new_wordle
-
-
 class NumbersData(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))  # relationship
@@ -100,3 +70,78 @@ class APIData(db.Model):
     api_name = db.Column(db.String(30), unique=True, nullable=False)
     last_used = db.Column(db.Integer, unique=False, nullable=True)
     timer = db.Column(db.Integer, unique=False, nullable=True)
+
+
+# -User------------------ Model functions ----------------------- #
+def add_test_user(email, pw_hash):
+    # noinspection PyArgumentList
+    test_user = User(
+        email=email,
+        username="tester",
+        password=pw_hash,
+        reset_key=000000,
+    )
+    return test_user
+
+
+def add_new_user(email, username, hashed_password, reset_key=000000):
+    """
+    Takes register_form input and creates a new user with default settings.
+    """
+    # noinspection PyArgumentList
+    new_user = User(
+        email=email.data,
+        username=username.data,
+        password=hashed_password,
+        reset_key=reset_key,
+    )
+    db.session.add(new_user)
+    db.session.commit()
+
+    countries_data = CountriesData(
+        country1=random.randint(1, 40),
+        country2=random.randint(1, 40),
+        country_streak=0,
+        country_record=0,
+        user_id=new_user.id,
+    )
+    db.session.add(countries_data)
+    db.session.commit()
+
+
+def do_passwords_match(user, password):
+    if bcrypt.check_password_hash(user.password, password.data):
+        return True
+    return False
+
+
+def change_password(user_id, hashed_password):
+    user = User.query.get(user_id)
+    user.password = hashed_password
+    user.reset_key = None
+    db.session.commit()
+
+
+# -Countries------------- Model functions ----------------------- #
+def add_new_countries(user_id):
+    new_countries = CountriesData(
+        user_id=user_id,
+        country1=random.randint(1, 30),
+        country2=random.randint(1, 30),
+        country_streak=0,
+        country_record=0,
+    )
+    return new_countries
+
+
+# -wordle---------------- Model functions ----------------------- #
+def add_new_wordle(user_id, answer):
+    new_wordle = WordleData(
+        user_id=user_id,
+        wordle_answer=answer,
+        wordle_round=0,
+        wordle_game_state="busy",
+    )
+    return new_wordle
+
+

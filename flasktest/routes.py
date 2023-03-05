@@ -7,20 +7,19 @@ import pandas as pd
 
 from flask import render_template, redirect, url_for, request, flash, session
 from flask_login import login_user, LoginManager, login_required, logout_user
-from flask_bcrypt import Bcrypt
 
-from flasktest import db, app
+import flasktest.models
+from flasktest import db, app, bcrypt
 from flasktest.models import User, CountriesData, WordleData, NumbersData, APIData, add_test_user,\
-    add_new_countries, add_new_wordle
-from flasktest.imports.forms_imp import RegisterForm, LoginForm, EmailForm, ResetForm, SearchPUBGForm,\
-    CountryForm, WordleForm, NumbersForm
-from flasktest.imports.pubg_imp import get_player_id, get_seasons, get_all_season_stats, create_dataframe,\
-    create_kills_bar, create_damage_bar, create_distance_bar
+    add_new_countries, add_new_wordle, add_new_user
+from flasktest.imports.forms_imp import RegisterForm, LoginForm, EmailForm, ResetForm,\
+    SearchPUBGForm, CountryForm, WordleForm, NumbersForm
+from flasktest.imports.pubg_imp import get_player_id, get_seasons, get_all_season_stats,\
+    create_dataframe, create_kills_bar, create_damage_bar, create_distance_bar
 from flasktest.imports.countries_imp import get_country_name, get_country_size, get_country_path
 from flasktest.imports.wordle_imp import Wordle
 from flasktest.imports.numbers_imp import create_numbers_divs
 
-bcrypt = Bcrypt(app)
 
 GMAIL_EMAIL = os.environ["GMAIL_EMAIL"]
 GMAIL_PASS = os.environ["GMAIL_PASS"]
@@ -68,17 +67,11 @@ def login():
                                login_form=login_form,
                                register_form=register_form)
 
-    # Login attempt
     if login_form.validate_on_submit():
         user = User.query.filter_by(email=login_form.email.data).first()
 
-        # No such email in db
-        if user is None:
-            flash("Email and password combination incorrect.")
-
-        # Incorrect password
-        elif not bcrypt.check_password_hash(user.password, login_form.password.data):
-            flash("Email and password combination incorrect.")
+        if not flasktest.models.do_passwords_match(user, login_form.password):
+            flash("Password incorrect.")
 
         else:
             # Login successful
@@ -105,38 +98,13 @@ def register():
     if request.method == "GET":
         return render_template("/landing/register.html", register_form=register_form)
 
-    # Register attempt
     if register_form.validate_on_submit():
-        # Email already in db
-        if not User.query.filter_by(email=register_form.email.data).first() is None:
-            flash("Email already registered!")
-            return redirect(url_for("login"))
-
-        # Passwords do not match
-        if not register_form.password.data == register_form.password2.data:
-            flash("Passwords do not match!")
-            return render_template("/landing/register.html", register_form=register_form)
-
-        # User registration successful
         hashed_password = bcrypt.generate_password_hash(register_form.password.data)
-        # noinspection PyArgumentList
-        new_user = User(
-            email=register_form.email.data,
-            username=register_form.username.data,
-            password=hashed_password,
-            reset_key="000000",
-        )
-        db.session.add(new_user)
-        db.session.commit()
-        countries_data = CountriesData(
-            country1=1,
-            country2=2,
-            country_streak=0,
-            country_record=0,
-            user_id=new_user.id,
-        )
-        db.session.add(countries_data)
-        db.session.commit()
+        add_new_user(
+            email=register_form.email,
+            username=register_form.username,
+            hashed_password=hashed_password,
+            )
         return redirect(url_for("login"))
 
     # Form not validated
@@ -153,12 +121,7 @@ def request_reset():
     # Request reset attempt
     if email_form.validate_on_submit():
         user = User.query.filter_by(email=email_form.email.data).first()
-        # No such email in db
-        if user is None:
-            flash("If user exists, code has been sent!")
-            return redirect(url_for("enter_reset"))
 
-        # Email exists and code is sent
         reset_code = random.randint(100000, 999999)
         user.reset_key = reset_code
         db.session.commit()
@@ -170,7 +133,7 @@ def request_reset():
                 to_addrs=user.email,
                 msg=f"Subject:Reset Code\n\nYour reset code: {reset_code}"
             )
-            flash("If email is exists, code hes been send!")
+            flash("Code hes been send!")
             return redirect(url_for("enter_reset"))
 
     # Request reset form not validated
@@ -187,32 +150,20 @@ def enter_reset():
     # Reset attempt
     if reset_form.validate_on_submit():
         user = User.query.filter_by(email=reset_form.email.data).first()
-        print(user)
-        # No such email in db
-        if user is None:
-            flash("Email and/or reset code incorrect!")
-            return render_template("/landing/enter_reset.html", reset_form=reset_form)
 
         # User did not request a reset
-        if user.reset_key == 000000:
+        if user.reset_key == 000000 or None:
             flash("Unauthorised request!")
             return render_template("/landing/enter_reset.html", reset_form=reset_form)
 
         # Incorrect reset code
         if not user.reset_key == reset_form.reset_code.data:
-            flash("Incorrect code!")
-            return render_template("/landing/enter_reset.html", reset_form=reset_form)
-
-        # Passwords do not match
-        if not reset_form.password.data == reset_form.password2.data:
-            flash("Passwords not match!")
+            flash("Incorrect email or code!")
             return render_template("/landing/enter_reset.html", reset_form=reset_form)
 
         # Password reset successful
         hashed_password = bcrypt.generate_password_hash(reset_form.password.data)
-        user.password = hashed_password
-        user.reset_key = None
-        db.session.commit()
+        flasktest.models.change_password(user.id, hashed_password)
         return redirect("login")
 
     # Enter reset form not validated
@@ -234,6 +185,7 @@ def pubg():
     kills_img = "../static/images/api/pubg/example_kills.png"
     damage_img = "../static/images/api/pubg/example_damage.png"
     distance_img = "../static/images/api/pubg/example_distance.png"
+    df_path = "flasktest/static/data/api/pubg/df_"
     pubg_data = APIData.query.filter_by(api_name="pubg").first()
 
     if request.method == "GET":
@@ -246,11 +198,9 @@ def pubg():
         save_mode = game_mode.replace("-", "_")
 
         # Check for existing data before contacting API
-        if os.path.exists(f"Flask/static/data/api/pubg/df_{name}_{save_mode}.csv"):
-            old_df = pd.read_csv(f"Flask/static/data/api/pubg/df_{name}_{save_mode}.csv")
-            kills_img = create_kills_bar(old_df, name, game_mode)
-            damage_img = create_damage_bar(old_df, name, game_mode)
-            distance_img = create_distance_bar(old_df, name, game_mode)
+        if os.path.exists(f"{df_path}{name}_{save_mode}.csv"):
+            kills_img, damage_img, distance_img = \
+                flasktest.imports.pubg_imp.load_old_pubg_data(df_path, name, game_mode, save_mode)
             return render_template("/api/pubg.html", pubg_form=pubg_form, kills_img=kills_img,
                                    damage_img=damage_img, distance_img=distance_img,
                                    scrollToAnchor="pubg-section", page="pubg")
@@ -259,91 +209,71 @@ def pubg():
         # Check API availability
         if (pubg_data.last_used + 60) > time.time():
             # API used in last 60 seconds
-            flash(f"API on cooldown. {(pubg_data.last_used + 60) - math.floor(time.time())}"
-                  f" seconds left.")
+            flash_message = flasktest.imports.pubg_imp.get_pubg_cooldown_message()
+            flash(flash_message)
             return render_template("/api/pubg.html", pubg_form=pubg_form, kills_img=kills_img,
                                    damage_img=damage_img, distance_img=distance_img,
                                    scrollToAnchor="pubg-section", page="pubg")
 
-        player_id = get_player_id(name)
-        # Check API availability (in case of multiple failed searches)
-        if player_id == 429:
-            # Too many requests
-            pubg_data.last_used = math.floor(time.time())
-            db.session.commit()
-            flash(f"API on cooldown. {(pubg_data.last_used + 60) - math.floor(time.time())}"
-                  f" seconds left.")
-            return render_template("/api/pubg.html", pubg_form=pubg_form, kills_img=kills_img,
-                                   damage_img=damage_img, distance_img=distance_img,
-                                   scrollToAnchor="pubg-section", page="pubg")
-        # Check if player exists
-        if player_id in (400, 404):
-            flash("Player not found!")
-            return render_template("/api/pubg.html", pubg_form=pubg_form, kills_img=kills_img,
-                                   damage_img=damage_img, distance_img=distance_img,
-                                   scrollToAnchor="pubg-section", page="pubg")
-        # Check for unexpected error
-        if player_id == 0:
-            flash("Unexpected error.")
-            return render_template("/api/pubg.html", pubg_form=pubg_form, kills_img=kills_img,
-                                   damage_img=damage_img, distance_img=distance_img,
-                                   scrollToAnchor="pubg-section", page="pubg")
+        id_code, id_response = get_player_id(name)
+        if not id_code == 200:
+            # Unsuccessful request - see pubg_imp.py for more info
+            if id_code == 429:
+                # Request limit reached
+                flasktest.imports.pubg_imp.update_pubg_api_data()
 
+            flash_message = id_response
+            flash(flash_message)
+            return render_template("/api/pubg.html", pubg_form=pubg_form, kills_img=kills_img,
+                                       damage_img=damage_img, distance_img=distance_img,
+                                       scrollToAnchor="pubg-section", page="pubg")
+
+        player_id = id_response
         # Player ID retrieved successfully
+        seasons_code, seasons_response = get_seasons()
+        if not seasons_code == 200:
+            # Unsuccessful request - see pubg_imp.py for more info
+            flash_message = seasons_response
+            if seasons_code == 429:
+                ## Request limit reached
+                flasktest.imports.pubg_imp.update_pubg_api_data()
 
-        valid_seasons = get_seasons()
-        # Check API availability
-        if valid_seasons == 429:
-            # Too many requests
-            pubg_data.last_used = math.floor(time.time())
-            db.session.commit()
-            flash(f"API on cooldown. {(pubg_data.last_used + 60) - math.floor(time.time())}"
-                  f" seconds left.")
+            flash(flash_message)
             return render_template("/api/pubg.html", pubg_form=pubg_form, kills_img=kills_img,
                                    damage_img=damage_img, distance_img=distance_img,
                                    scrollToAnchor="pubg-section", page="pubg")
 
-        # Check API response validity
-        if valid_seasons in (400, 404, 0):
-            flash("Unexpected error.")
+        valid_seasons = seasons_response
+        # Valid seasons retrieved successfully
+        stats_code, stats_response = get_all_season_stats(player_id, valid_seasons, game_mode)
+        if not stats_code == 200:
+            # Unsuccessful request - see pubg_imp.py for more info
+            flash_message = stats_response
+            if stats_code == 429:
+                # Request limit reached
+                flasktest.imports.pubg_imp.update_pubg_api_data()
+
+            flash(flash_message)
             return render_template("/api/pubg.html", pubg_form=pubg_form, kills_img=kills_img,
                                    damage_img=damage_img, distance_img=distance_img,
                                    scrollToAnchor="pubg-section", page="pubg")
 
-        # Seasons retrieved successfully
-        player_stats = get_all_season_stats(player_id, valid_seasons, game_mode)
-        # Check API availability
-        if player_stats == 429:
-            # Too many requests
-            pubg_data.last_used = math.floor(time.time())
-            db.session.commit()
-            flash(f"API on cooldown. {(pubg_data.last_used + 60) - math.floor(time.time())}"
-                  f" seconds left.")
-            return render_template("/api/pubg.html", pubg_form=pubg_form, kills_img=kills_img,
-                                   damage_img=damage_img, distance_img=distance_img,
-                                   scrollToAnchor="pubg-section", page="pubg")
-
-        # Check API response validity
-        if valid_seasons in (400, 404, 0):
-            flash("Unexpected error.")
-            return render_template("/api/pubg.html", pubg_form=pubg_form, kills_img=kills_img,
-                                   damage_img=damage_img, distance_img=distance_img,
-                                   scrollToAnchor="pubg-section", page="pubg")
-
-        # Check if player was active in at least 2 seasons, else draw no graph
+        player_stats = stats_response
+        # Player stats retrieved successfully
         if len(player_stats[0]) < 2:
+            # Check if player was active in at least 2 seasons, else draw no graph
             flash("Player has insufficient stats to generate graph")
             return render_template("/api/pubg.html", pubg_form=pubg_form, kills_img=kills_img,
                                    damage_img=damage_img, distance_img=distance_img,
                                    scrollToAnchor="pubg-section", page="pubg")
 
+        # Success
         new_df = create_dataframe(player_stats, name, save_mode)
         kills_img = create_kills_bar(new_df, name, game_mode)
         damage_img = create_damage_bar(new_df, name, game_mode)
         distance_img = create_distance_bar(new_df, name, game_mode)
         # Update api db with timestamp
-        APIData.pubg_api_used = math.floor(time.time())
-        db.session.commit()
+        flasktest.imports.pubg_imp.update_pubg_api_data()
         return render_template("/api/pubg.html", pubg_form=pubg_form, kills_img=kills_img,
                                damage_img=damage_img, distance_img=distance_img,
                                scrollToAnchor="pubg-section", page="pubg")

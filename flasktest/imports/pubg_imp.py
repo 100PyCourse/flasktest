@@ -1,95 +1,102 @@
 """
 Handles logic for the pubg page.
-Handles requests, dfs and images.
+Handles requests, dataframes and images.
 """
 
 import os
 import time
 import requests
 import pandas as pd
+import math
 import plotly.express as px
+
+from flasktest.models import APIData
+from flasktest import db
 
 
 PUBG_API_KEY = os.environ["PUBG_API_KEY"]
-pd.options.display.float_format = "{:,.4f}".format
 TIMEOUT = 3
+NR_OF_BARS = 6  # nr of bars created in the charts
 
+GET_PLAYER_ID_URL = "https://api.pubg.com/shards/steam/players?filter[playerNames]="
+GET_SEASONS_URL = "https://api.pubg.com/shards/steam/seasons"
+
+pd.options.display.float_format = "{:,.4f}".format
 headers = {
     "Authorization": f"Bearer {PUBG_API_KEY}",
     "Accept": "application/vnd.api+json",
 }
-
 stats_list = ["damageDealt", "kills", "assists", "headshotKills", "roundMostKills",
               "rideDistance", "top10s", "roundsPlayed", "wins"]
 
 
 def get_player_id(name):
-    """Takes a player's name (str), contacts pubg API and returns either the player_id (str),
-     429 if too many requests or 404 for incorrect "name" value or 0 if other error.
+    """
+    Takes a player's name (str) and returns the id(str) if success,
+    else returns the status code and the connected flash message.
      """
     response = requests.get(
-        f"https://api.pubg.com/shards/steam/players?filter[playerNames]={name}",
+        f"{GET_PLAYER_ID_URL}{name}",
         headers=headers,
         timeout=TIMEOUT,
     )
+    status_code = response.status_code
     # Successful
-    if response.status_code == 200:
+    if status_code == 200:
         json_response = response.json()
         player_id = json_response["data"][0]["id"]
-        return player_id
+        return status_code, player_id
 
-    # Missing request params
-    if response.status_code == 400:
-        return 400
-    # Cannot find data
-    if response.status_code == 404:
-        return 404
+    # Player not found
+    if status_code == 404:
+        return status_code, "Player not found!"
+
     # Too many requests
-    if response.status_code == 429:
-        return 429
+    if status_code == 429:
+        update_pubg_api_data()
+        pubg_data = APIData.query.filter_by(api_name="pubg").first()
+        return status_code, f"API on cooldown." \
+                            f" {(pubg_data.last_used + 60) - math.floor(time.time())} seconds left."
+
     # Unexpected error
-    return 0
+    return status_code, "Unexpected error."
 
 
 def get_seasons():
     """
-    Contacts pubg API and returns either the valid seasons (list),
-    429 if too many requests or 404 for incorrect "name" value or 0 if other error.
-    Valid means after region updates.
-    """
+    Returns a list of all seasons after player-base merge if success,
+    else returns the status code and the connected flash message.
+     """
     response = requests.get(
-        "https://api.pubg.com/shards/steam/seasons",
+        GET_SEASONS_URL,
         headers=headers,
         timeout=TIMEOUT,
     )
-
+    status_code = response.status_code
     # Successful
-    if response.status_code == 200:
+    if status_code == 200:
         json_response = response.json()
         all_seasons = [x["id"] for x in json_response["data"]]
         valid_seasons = [x for x in all_seasons if "pc-" in x][::-1]
-        return valid_seasons
+        return status_code, valid_seasons
 
-    # Missing request params
-    if response.status_code == 400:
-        return 400
-    # Cannot find data
-    if response.status_code == 404:
-        return 404
     # Too many requests
-    if response.status_code == 429:
-        return 429
+    if status_code == 429:
+        update_pubg_api_data()
+        pubg_data = APIData.query.filter_by(api_name="pubg").first()
+        return status_code, f"API on cooldown." \
+                            f" {(pubg_data.last_used + 60) - math.floor(time.time())} seconds left."
+
     # Unexpected error
-    return 0
+    return status_code, "Unexpected error."
 
 
 def get_all_season_stats(player_id, valid_seasons, game_mode):
     """
-    Takes player_id(str), valid_seasons(list) and game_mode(str).
-    Contacts pubg API and returns all valid season stats, 429 if too many requests,
-    404 for incorrect "name" value or 0 if other error.
-    Valid means after region updates.
-    """
+    Takes the player id(str), valid seasons(list), and game mode(str) and if successful returns
+    a list with individual stats(list),
+    else returns the status code and connected flash message.
+     """
     assists = []
     damage = []
     kills = []
@@ -113,27 +120,25 @@ def get_all_season_stats(player_id, valid_seasons, game_mode):
             headers=headers,
             timeout=TIMEOUT,
         )
-
+        status_code = response.status_code
         # Successful
-        if response.status_code == 200:
+        if status_code == 200:
             try:
                 data_json = response.json()
                 stats = data_json["data"]["attributes"]["gameModeStats"][game_mode]
             except KeyError:
-                return 404
+                return status_code, "Internal error!"
 
-        # Missing request params
-        elif response.status_code == 400:
-            return 400
-        # Cannot find data
-        elif response.status_code == 404:
-            return 404
-        # Too many requests
+            # Too many requests
         elif response.status_code == 429:
-            return 429
-        # Unexpected error
+            update_pubg_api_data()
+            pubg_data = APIData.query.filter_by(api_name="pubg").first()
+            return status_code, f"API on cooldown." \
+                                f" {(pubg_data.last_used + 60) - math.floor(time.time())} seconds left."
+
         else:
-            return 0
+            # Unexpected error
+            return status_code, "Unexpected error."
 
         if stats["roundsPlayed"] > 4:
             assists.append(stats["assists"])
@@ -150,12 +155,12 @@ def get_all_season_stats(player_id, valid_seasons, game_mode):
         else:
             print(f"{season} skipped")
 
-        if len(games) == 6:
-            return [assists, damage, kills, headshots, most_kills,
-                    distance, top10s, games, wins, seasons]
+        if len(games) == NR_OF_BARS:
+            return status_code, [assists, damage, kills, headshots, most_kills,
+                                 distance, top10s, games, wins, seasons]
 
-    return [assists, damage, kills, headshots, most_kills,
-            distance, top10s, games, wins, seasons]
+    return status_code, [assists, damage, kills, headshots, most_kills,
+                         distance, top10s, games, wins, seasons]
 
 
 def create_dataframe(player_stats, name, mode):
@@ -200,7 +205,7 @@ def create_dataframe(player_stats, name, mode):
 
 def create_kills_bar(dataframe, name, mode):
     """
-    Takes a df, player name(str) and game mode(str).
+    Takes a dataframe, player name(str) and game mode(str).
     Saves a png of a bar chart from entered data.
     Returns image location to be rendered.
     """
@@ -301,3 +306,31 @@ def create_distance_bar(dataframe, name, mode):
     distance_bar.write_image("flasktest/static/images/api/pubg/current_distance.png", scale=2)
 
     return "../static/images/api/pubg/current_distance.png"
+
+
+def load_old_pubg_data(df_path, name, game_mode, save_mode):
+    """"
+    Used to load local record. Takes request form params and returns the bar charts.
+    """
+    old_df = pd.read_csv(f"{df_path}{name}_{save_mode}.csv")
+    kills_img = create_kills_bar(old_df, name, game_mode)
+    damage_img = create_damage_bar(old_df, name, game_mode)
+    distance_img = create_distance_bar(old_df, name, game_mode)
+    return kills_img, damage_img, distance_img
+
+
+def update_pubg_api_data():
+    """"
+    Records the time of api request limit to check against when making a new request.
+    """
+    pubg_data = APIData.query.filter_by(api_name="pubg").first()
+    pubg_data.last_used = math.floor(time.time())
+    db.session.commit()
+
+
+def get_pubg_cooldown_message():
+    """"
+    Returns a string containing the api cooldown timer and the connected flash message.
+    """
+    pubg_data = APIData.query.filter_by(api_name="pubg").first()
+    return f"API on cooldown. {(pubg_data.last_used + 60) - math.floor(time.time())} seconds left."

@@ -3,6 +3,7 @@ import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
+from flask_bcrypt import Bcrypt
 
 
 flask_key = os.environ["flask_key"]
@@ -14,7 +15,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{sqlite_uri}\\website_databa
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
-
+bcrypt = Bcrypt(app)
 Bootstrap(app)
 
 from flasktest import routes
