@@ -14,9 +14,9 @@ Wordle
 
 <section id="game-section">
     <div class="container game-container">
-        {% if game_win %}
+        {% if game_state == "win" %}
             <h1>You win!</h1>
-        {% elif game_loss %}
+        {% elif game_state == "loss" %}
             <h1>You lose!</h1>
         {% endif %}
 

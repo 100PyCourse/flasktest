@@ -3,7 +3,6 @@ import math
 import smtplib
 import time
 import os
-import pandas as pd
 
 from flask import render_template, redirect, url_for, request, flash, session
 from flask_login import login_user, LoginManager, login_required, logout_user
@@ -11,13 +10,13 @@ from flask_login import login_user, LoginManager, login_required, logout_user
 import flasktest.models
 from flasktest import db, app, bcrypt
 from flasktest.models import User, CountriesData, WordleData, NumbersData, APIData, add_test_user,\
-    add_new_countries, add_new_wordle, add_new_user
+    add_new_user, start_new_wordle, play_wordle_game, get_last_wordle_guess
 from flasktest.imports.forms_imp import RegisterForm, LoginForm, EmailForm, ResetForm,\
     SearchPUBGForm, CountryForm, WordleForm, NumbersForm
 from flasktest.imports.pubg_imp import get_player_id, get_seasons, get_all_season_stats,\
     create_dataframe, create_kills_bar, create_damage_bar, create_distance_bar
-from flasktest.imports.countries_imp import get_country_name, get_country_size, get_country_path
-from flasktest.imports.wordle_imp import Wordle
+from flasktest.imports.countries_imp import get_country_name, get_country_size, get_country_path,\
+    evaluate_countries_game
 from flasktest.imports.numbers_imp import create_numbers_divs
 
 
@@ -47,10 +46,8 @@ def index():
 def base():
     """Create two dummy accounts and API defaults after db reset"""
     hashed_password = bcrypt.generate_password_hash("test1234")
-    new_user = add_test_user(email=TEST_EMAIL, pw_hash=hashed_password)
-    db.session.add(new_user)
-    new_user2 = add_test_user(email=TEST_EMAIL2, pw_hash=hashed_password)
-    db.session.add(new_user2)
+    add_test_user(email=TEST_EMAIL, username="test1", hashed_password=hashed_password)
+    add_test_user(email=TEST_EMAIL2, username="test2", hashed_password=hashed_password)
     pubg_api = APIData(api_name="pubg", last_used=math.floor(time.time()), timer=60)
     db.session.add(pubg_api)
     db.session.commit()
@@ -80,7 +77,8 @@ def login():
             return redirect(url_for("home"))
 
     # Unsuccessful attempts
-    return render_template("/landing/login.html", login_form=login_form,
+    return render_template("/landing/login.html",
+                           login_form=login_form,
                            register_form=register_form)
 
 
@@ -96,7 +94,8 @@ def register():
     register_form = RegisterForm()
 
     if request.method == "GET":
-        return render_template("/landing/register.html", register_form=register_form)
+        return render_template("/landing/register.html",
+                               register_form=register_form)
 
     if register_form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(register_form.password.data)
@@ -108,7 +107,8 @@ def register():
         return redirect(url_for("login"))
 
     # Form not validated
-    return render_template("/landing/register.html", register_form=register_form)
+    return render_template("/landing/register.html",
+                           register_form=register_form)
 
 
 @app.route("/request-reset", methods=["GET", "POST"])
@@ -116,7 +116,8 @@ def request_reset():
     email_form = EmailForm()
 
     if request.method == "GET":
-        return render_template("/landing/request_reset.html", email_form=email_form)
+        return render_template("/landing/request_reset.html",
+                               email_form=email_form)
 
     # Request reset attempt
     if email_form.validate_on_submit():
@@ -137,7 +138,8 @@ def request_reset():
             return redirect(url_for("enter_reset"))
 
     # Request reset form not validated
-    return render_template("/landing/request_reset.html", email_form=email_form)
+    return render_template("/landing/request_reset.html",
+                           email_form=email_form)
 
 
 @app.route("/enter-reset", methods=["GET", "POST"])
@@ -145,7 +147,8 @@ def enter_reset():
     reset_form = ResetForm()
 
     if request.method == "GET":
-        return render_template("/landing/enter_reset.html", reset_form=reset_form)
+        return render_template("/landing/enter_reset.html",
+                               reset_form=reset_form)
 
     # Reset attempt
     if reset_form.validate_on_submit():
@@ -154,12 +157,14 @@ def enter_reset():
         # User did not request a reset
         if user.reset_key == 000000 or None:
             flash("Unauthorised request!")
-            return render_template("/landing/enter_reset.html", reset_form=reset_form)
+            return render_template("/landing/enter_reset.html",
+                                   reset_form=reset_form)
 
         # Incorrect reset code
         if not user.reset_key == reset_form.reset_code.data:
             flash("Incorrect email or code!")
-            return render_template("/landing/enter_reset.html", reset_form=reset_form)
+            return render_template("/landing/enter_reset.html",
+                                   reset_form=reset_form)
 
         # Password reset successful
         hashed_password = bcrypt.generate_password_hash(reset_form.password.data)
@@ -167,14 +172,16 @@ def enter_reset():
         return redirect("login")
 
     # Enter reset form not validated
-    return render_template("/landing/enter_reset.html", reset_form=reset_form)
+    return render_template("/landing/enter_reset.html",
+                           reset_form=reset_form)
 
 
 # ----------------------- HOME route ----------------------- #
 @app.route("/home")
 @login_required
 def home():
-    return render_template("home.html", page="home")
+    return render_template("home.html",
+                           page="home")
 
 
 # ----------------------- API routes ----------------------- #
@@ -201,6 +208,7 @@ def pubg():
         if os.path.exists(f"{df_path}{name}_{save_mode}.csv"):
             kills_img, damage_img, distance_img = \
                 flasktest.imports.pubg_imp.load_old_pubg_data(df_path, name, game_mode, save_mode)
+
             return render_template("/api/pubg.html", pubg_form=pubg_form, kills_img=kills_img,
                                    damage_img=damage_img, distance_img=distance_img,
                                    scrollToAnchor="pubg-section", page="pubg")
@@ -225,8 +233,8 @@ def pubg():
             flash_message = id_response
             flash(flash_message)
             return render_template("/api/pubg.html", pubg_form=pubg_form, kills_img=kills_img,
-                                       damage_img=damage_img, distance_img=distance_img,
-                                       scrollToAnchor="pubg-section", page="pubg")
+                                   damage_img=damage_img, distance_img=distance_img,
+                                   scrollToAnchor="pubg-section", page="pubg")
 
         player_id = id_response
         # Player ID retrieved successfully
@@ -235,7 +243,7 @@ def pubg():
             # Unsuccessful request - see pubg_imp.py for more info
             flash_message = seasons_response
             if seasons_code == 429:
-                ## Request limit reached
+                # Request limit reached
                 flasktest.imports.pubg_imp.update_pubg_api_data()
 
             flash(flash_message)
@@ -278,77 +286,48 @@ def pubg():
                                damage_img=damage_img, distance_img=distance_img,
                                scrollToAnchor="pubg-section", page="pubg")
 
+    # Form not validated
+    return render_template("/api/pubg.html", pubg_form=pubg_form, kills_img=kills_img,
+                           damage_img=damage_img, distance_img=distance_img,
+                           scrollToAnchor="pubg-section", page="pubg")
+
 
 # ----------------------- Game routes ----------------------- #
 @app.route("/games/countries", methods=["GET", "POST"])
 @login_required
 def countries():
     country_form = CountryForm()
-    user_email = User.query.get(session["id"]).email
-    user = User.query.filter_by(email=user_email).first()
-    countries_data = CountriesData.query.filter_by(user_id=user.id).first()
+    countries_data = CountriesData.query.filter_by(user_id=session["id"]).first()
 
-    # Did not play before
-    if not countries_data:
-        new_countries = add_new_countries(user_id=user.id)
-        db.session.add(new_countries)
-        db.session.commit()
-        countries_data = CountriesData.query.filter_by(user_id=user.id).first()
+    if request.method == "GET":
+        return render_template("/games/countries.html",
+                               country_form=country_form,
+                               name1=get_country_name(countries_data.country_old),
+                               size1=get_country_size(countries_data.country_old),
+                               path1=get_country_path(countries_data.country_old),
+                               name2=get_country_name(countries_data.country_new),
+                               size2=get_country_size(countries_data.country_new),
+                               path2=get_country_path(countries_data.country_new),
+                               country_streak=countries_data.country_streak,
+                               page="countries",
+                               country_record=countries_data.country_record)
 
-    # Played before
     if country_form.validate_on_submit():
-        guess = int(country_form.select.data)
-        size1 = int(get_country_size(countries_data.country1))
-        size2 = int(get_country_size(countries_data.country2))
-
-        if guess == 1 and size2 >= size1:
-            countries_data.country_streak += 1
-            db.session.commit()
-            if countries_data.country_streak > countries_data.country_record:
-                countries_data.country_record = countries_data.country_streak
-                db.session.commit()
-
-        elif guess == 0 and size2 <= size1:
-            countries_data.country_streak += 1
-            db.session.commit()
-            if countries_data.country_streak > countries_data.country_record:
-                countries_data.country_record = countries_data.country_streak
-                db.session.commit()
-
-        else:
-            countries_data.country_streak = 0
-            db.session.commit()
-
-        countries_data.country1 = countries_data.country2
-        countries_data.country2 = random.randint(0, 44)
-        db.session.commit()
-        while countries_data.country2 == countries_data.country1:
-            countries_data.country2 = random.randint(0, 44)
+        guess = country_form.select.data
+        countries_data = evaluate_countries_game(guess=guess, user_id=session["id"])
 
         return render_template("/games/countries.html",
                                country_form=country_form,
-                               name1=get_country_name(countries_data.country1),
-                               size1=get_country_size(countries_data.country1),
-                               path1=get_country_path(countries_data.country1),
-                               name2=get_country_name(countries_data.country2),
-                               size2=get_country_size(countries_data.country2),
-                               path2=get_country_path(countries_data.country2),
+                               name1=get_country_name(countries_data.country_old),
+                               size1=get_country_size(countries_data.country_old),
+                               path1=get_country_path(countries_data.country_old),
+                               name2=get_country_name(countries_data.country_new),
+                               size2=get_country_size(countries_data.country_new),
+                               path2=get_country_path(countries_data.country_new),
                                country_streak=countries_data.country_streak,
                                country_record=countries_data.country_record,
                                page="countries",
                                scrollToAnchor="country-location")
-
-    return render_template("/games/countries.html",
-                           country_form=country_form,
-                           name1=get_country_name(countries_data.country1),
-                           size1=get_country_size(countries_data.country1),
-                           path1=get_country_path(countries_data.country1),
-                           name2=get_country_name(countries_data.country2),
-                           size2=get_country_size(countries_data.country2),
-                           path2=get_country_path(countries_data.country2),
-                           country_streak=countries_data.country_streak,
-                           page="countries",
-                           country_record=countries_data.country_record)
 
 
 @app.route("/games/wordle", methods=["POST", "GET"])
@@ -361,296 +340,53 @@ def wordle():
 @login_required
 def play_wordle():
     wordle_form = WordleForm()
-    user = User.query.get(session["id"])
+    # Get the users last played game
     descending = WordleData.query.order_by(WordleData.id.desc())
     wordle_data = descending.filter_by(user_id=session["id"]).first()
+
+    print(wordle_data.wordle_guess4)
 
     # No games played yet
     if not wordle_data:
         # Start new game
-        wordle_answer = Wordle(random.choice(Wordle.word_list)).answer
-        wordle_divs = Wordle(random.choice(Wordle.word_list)).game_start
-        wordle_data = add_new_wordle(user_id=user.id, answer=wordle_answer)
-        db.session.add(wordle_data)
-        db.session.commit()
+        wordle_divs = start_new_wordle(session["id"])
         return render_template("games/play_wordle.html",
                                wordle_form=wordle_form,
-                               wordle_divs=wordle_divs, page="play_wordle")
+                               wordle_divs=wordle_divs,
+                               page="play_wordle")
 
     # Last game finished
     if wordle_data.wordle_game_state in ("win", "loss"):
         # Start new game
-        new_wordle = Wordle(random.choice(Wordle.word_list))
-        wordle_answer = new_wordle.answer
-        wordle_divs = new_wordle.start_wordle()
-        wordle_data = add_new_wordle(user_id=user.id, answer=wordle_answer)
-        db.session.add(wordle_data)
-        db.session.commit()
+        wordle_divs = start_new_wordle(session["id"])
         return render_template("games/play_wordle.html",
                                wordle_form=wordle_form,
-                               wordle_divs=wordle_divs, page="play_wordle")
+                               wordle_divs=wordle_divs,
+                               page="play_wordle")
 
     # There is an active game
     if wordle_form.validate_on_submit():
-        # Check validity of guessed word
-        if wordle_form.guess.data in Wordle.word_list:
+        # Call play game function
+        game_state, wordle_divs = play_wordle_game(wordle_guess=wordle_form.guess.data,
+                                                   user_id=session["id"])
 
-            game_state = "busy"
-            # Check for win
-            if wordle_data.wordle_answer == wordle_form.guess.data.upper():
-                wordle_data.wordle_game_state = "win"
-                game_state = "win"
+        return render_template("games/play_wordle.html",
+                               wordle_form=wordle_form,
+                               wordle_divs=wordle_divs,
+                               game_state=game_state,
+                               page="play_wordle")
 
-            if wordle_data.wordle_round == 0:
-                # Response after 1st guess
-                wordle_game = Wordle(wordle_data.wordle_answer)
-                wordle_divs = wordle_game.game_start
-                round1 = wordle_game.round1_data(wordle_form.guess.data.upper(),
-                                                 wordle_data.wordle_answer)
-                wordle_divs[:5] = round1
-                wordle_data.wordle_round = 1
-                wordle_data.wordle_guess1 = wordle_form.guess.data.upper()
-                if game_state == "win":
-                    wordle_data.wordle_win_round = 1
-                    db.session.commit()
-                    return render_template("games/play_wordle.html",
-                                           wordle_form=wordle_form,
-                                           wordle_divs=wordle_divs,
-                                           game_win=True, page="play_wordle")
-                db.session.commit()
-                return render_template("games/play_wordle.html",
-                                       wordle_form=wordle_form,
-                                       wordle_divs=wordle_divs, page="play_wordle")
+    # GET request
+    # Need last guessed word to recreate game state
+    last_wordle_guess = get_last_wordle_guess(wordle_data=wordle_data)
+    game_state, wordle_divs = play_wordle_game(wordle_guess=last_wordle_guess,
+                                               user_id=session["id"])
 
-            if wordle_data.wordle_round == 1:
-                wordle_game = Wordle(wordle_data.wordle_answer)
-                round1 = wordle_game.round1_data(wordle_data.wordle_guess1,
-                                                 wordle_game.answer)
-                round2 = wordle_game.round2_data(wordle_form.guess.data.upper(),
-                                                 wordle_game.answer)
-                wordle_divs = wordle_game.game_start
-                wordle_divs[:5] = round1
-                wordle_divs[5:10] = round2
-                wordle_data.wordle_round = 2
-                wordle_data.wordle_guess2 = wordle_form.guess.data.upper()
-                if game_state == "win":
-                    wordle_data.wordle_win_round = 2
-                    db.session.commit()
-                    return render_template("games/play_wordle.html", wordle_form=wordle_form,
-                                           wordle_divs=wordle_divs, game_win=True,
-                                           page="play_wordle")
-
-                db.session.commit()
-                return render_template("games/play_wordle.html", wordle_form=wordle_form,
-                                       wordle_divs=wordle_divs, page="play_wordle")
-
-            if wordle_data.wordle_round == 2:
-                wordle_game = Wordle(wordle_data.wordle_answer)
-                round1 = wordle_game.round1_data(wordle_data.wordle_guess1,
-                                                 wordle_data.wordle_answer)
-                round2 = wordle_game.round2_data(wordle_data.wordle_guess2,
-                                                 wordle_data.wordle_answer)
-                round3 = wordle_game.round3_data(wordle_form.guess.data.upper(),
-                                                 wordle_data.wordle_answer)
-                wordle_divs = wordle_game.game_start
-                wordle_divs[:5] = round1
-                wordle_divs[5:10] = round2
-                wordle_divs[10:15] = round3
-                wordle_data.wordle_round = 3
-                wordle_data.wordle_guess3 = wordle_form.guess.data.upper()
-                if game_state == "win":
-                    wordle_data.wordle_win_round = 3
-                    db.session.commit()
-                    return render_template("games/play_wordle.html", wordle_form=wordle_form,
-                                           wordle_divs=wordle_divs, game_win=True,
-                                           page="play_wordle")
-
-                db.session.commit()
-                return render_template("games/play_wordle.html", wordle_form=wordle_form,
-                                       wordle_divs=wordle_divs, page="play_wordle")
-
-            if wordle_data.wordle_round == 3:
-                wordle_game = Wordle(wordle_data.wordle_answer)
-                round1 = wordle_game.round1_data(wordle_data.wordle_guess1,
-                                                 wordle_data.wordle_answer)
-                round2 = wordle_game.round2_data(wordle_data.wordle_guess2,
-                                                 wordle_data.wordle_answer)
-                round3 = wordle_game.round3_data(wordle_data.wordle_guess3,
-                                                 wordle_data.wordle_answer)
-                round4 = wordle_game.round4_data(wordle_form.guess.data.upper(),
-                                                 wordle_data.wordle_answer)
-                wordle_divs = wordle_game.game_start
-                wordle_divs[:5] = round1
-                wordle_divs[5:10] = round2
-                wordle_divs[10:15] = round3
-                wordle_divs[15:20] = round4
-                wordle_data.wordle_round = 4
-                wordle_data.wordle_guess4 = wordle_form.guess.data.upper()
-                if game_state == "win":
-                    wordle_data.wordle_win_round = 4
-                    db.session.commit()
-                    return render_template("games/play_wordle.html", wordle_form=wordle_form,
-                                           wordle_divs=wordle_divs, game_win=True,
-                                           page="play_wordle")
-
-                db.session.commit()
-                return render_template("games/play_wordle.html", wordle_form=wordle_form,
-                                       wordle_divs=wordle_divs, page="play_wordle")
-
-            if wordle_data.wordle_round == 4:
-                wordle_game = Wordle(wordle_data.wordle_answer)
-                round1 = wordle_game.round1_data(wordle_data.wordle_guess1,
-                                                 wordle_data.wordle_answer)
-                round2 = wordle_game.round2_data(wordle_data.wordle_guess2,
-                                                 wordle_data.wordle_answer)
-                round3 = wordle_game.round3_data(wordle_data.wordle_guess3,
-                                                 wordle_data.wordle_answer)
-                round4 = wordle_game.round4_data(wordle_data.wordle_guess4,
-                                                 wordle_data.wordle_answer)
-                round5 = wordle_game.round5_data(wordle_form.guess.data.upper(),
-                                                 wordle_data.wordle_answer)
-                wordle_divs = wordle_game.game_start
-                wordle_divs[:5] = round1
-                wordle_divs[5:10] = round2
-                wordle_divs[10:15] = round3
-                wordle_divs[15:20] = round4
-                wordle_divs[20:25] = round5
-                wordle_data.wordle_round = 5
-                wordle_data.wordle_guess5 = wordle_form.guess.data.upper()
-                if game_state == "win":
-                    wordle_data.wordle_win_round = 5
-                    db.session.commit()
-                    return render_template("games/play_wordle.html", wordle_form=wordle_form,
-                                           wordle_divs=wordle_divs, game_win=True,
-                                           page="play_wordle")
-
-                wordle_data.wordle_game_state = "loss"
-                wordle_data.wordle_win_round = -1
-                db.session.commit()
-                return render_template("games/play_wordle.html", wordle_form=wordle_form,
-                                       wordle_divs=wordle_divs, game_loss=True,
-                                       page="play_wordle")
-        # Guess is not valid
-        else:
-            flash(f"{wordle_form.guess.data} is not accepted!")
-            # Loading saved game data
-            # temp_wordle is only usd to get base div setup
-            temp_wordle = Wordle("GUESS")
-            wordle_divs = temp_wordle.game_start
-            if wordle_data.wordle_round == 0:
-                return render_template("games/play_wordle.html", wordle_form=wordle_form,
-                                       wordle_divs=wordle_divs, page="play_wordle")
-
-            if wordle_data.wordle_round == 1:
-                wordle_divs[:5] = temp_wordle.round1_data(wordle_data.wordle_guess1,
-                                                          wordle_data.wordle_answer)
-                return render_template("games/play_wordle.html", wordle_form=wordle_form,
-                                       wordle_divs=wordle_divs, page="play_wordle")
-
-            if wordle_data.wordle_round == 2:
-                wordle_divs[:5] = temp_wordle.round1_data(wordle_data.wordle_guess1,
-                                                          wordle_data.wordle_answer)
-                wordle_divs[5:10] = temp_wordle.round2_data(wordle_data.wordle_guess2,
-                                                            wordle_data.wordle_answer)
-                return render_template("games/play_wordle.html", wordle_form=wordle_form,
-                                       wordle_divs=wordle_divs, page="play_wordle")
-
-            if wordle_data.wordle_round == 3:
-                wordle_divs[:5] = temp_wordle.round1_data(wordle_data.wordle_guess1,
-                                                          wordle_data.wordle_answer)
-                wordle_divs[5:10] = temp_wordle.round2_data(wordle_data.wordle_guess2,
-                                                            wordle_data.wordle_answer)
-                wordle_divs[10:15] = temp_wordle.round3_data(wordle_data.wordle_guess3,
-                                                             wordle_data.wordle_answer)
-                return render_template("games/play_wordle.html", wordle_form=wordle_form,
-                                       wordle_divs=wordle_divs, page="play_wordle")
-
-            if wordle_data.wordle_round == 4:
-                wordle_divs[:5] = temp_wordle.round1_data(wordle_data.wordle_guess1,
-                                                          wordle_data.wordle_answer)
-                wordle_divs[5:10] = temp_wordle.round2_data(wordle_data.wordle_guess2,
-                                                            wordle_data.wordle_answer)
-                wordle_divs[10:15] = temp_wordle.round3_data(wordle_data.wordle_guess3,
-                                                             wordle_data.wordle_answer)
-                wordle_divs[15:20] = temp_wordle.round3_data(wordle_data.wordle_guess4,
-                                                             wordle_data.wordle_answer)
-                return render_template("games/play_wordle.html", wordle_form=wordle_form,
-                                       wordle_divs=wordle_divs, page="play_wordle")
-
-            if wordle_data.wordle_round == 5:
-                wordle_divs[:5] = temp_wordle.round1_data(wordle_data.wordle_guess1,
-                                                          wordle_data.wordle_answer)
-                wordle_divs[5:10] = temp_wordle.round2_data(wordle_data.wordle_guess2,
-                                                            wordle_data.wordle_answer)
-                wordle_divs[10:15] = temp_wordle.round3_data(wordle_data.wordle_guess3,
-                                                             wordle_data.wordle_answer)
-                wordle_divs[15:20] = temp_wordle.round3_data(wordle_data.wordle_guess4,
-                                                             wordle_data.wordle_answer)
-                wordle_divs[20:25] = temp_wordle.round3_data(wordle_data.wordle_guess5,
-                                                             wordle_data.wordle_answer)
-                wordle_win = 0
-                return render_template("games/play_wordle.html", wordle_form=wordle_form,
-                                       wordle_divs=wordle_divs, wordle_wi=wordle_win,
-                                       page="play_wordle")
-
-    # Loading saved game data
-    # temp_wordle is only usd to get base div setup
-    temp_wordle = Wordle("GUESS")
-    wordle_divs = temp_wordle.game_start
-    if wordle_data.wordle_round == 0:
-        return render_template("games/play_wordle.html", wordle_form=wordle_form,
-                               wordle_divs=wordle_divs, page="play_wordle")
-
-    if wordle_data.wordle_round == 1:
-        wordle_divs[:5] = temp_wordle.round1_data(wordle_data.wordle_guess1,
-                                                  wordle_data.wordle_answer)
-        return render_template("games/play_wordle.html", wordle_form=wordle_form,
-                               wordle_divs=wordle_divs, page="play_wordle")
-
-    if wordle_data.wordle_round == 2:
-        wordle_divs[:5] = temp_wordle.round1_data(wordle_data.wordle_guess1,
-                                                  wordle_data.wordle_answer)
-        wordle_divs[5:10] = temp_wordle.round2_data(wordle_data.wordle_guess2,
-                                                    wordle_data.wordle_answer)
-        return render_template("games/play_wordle.html", wordle_form=wordle_form,
-                               wordle_divs=wordle_divs, page="play_wordle")
-
-    if wordle_data.wordle_round == 3:
-        wordle_divs[:5] = temp_wordle.round1_data(wordle_data.wordle_guess1,
-                                                  wordle_data.wordle_answer)
-        wordle_divs[5:10] = temp_wordle.round2_data(wordle_data.wordle_guess2,
-                                                    wordle_data.wordle_answer)
-        wordle_divs[10:15] = temp_wordle.round3_data(wordle_data.wordle_guess3,
-                                                     wordle_data.wordle_answer)
-        return render_template("games/play_wordle.html", wordle_form=wordle_form,
-                               wordle_divs=wordle_divs, page="play_wordle")
-
-    if wordle_data.wordle_round == 4:
-        wordle_divs[:5] = temp_wordle.round1_data(wordle_data.wordle_guess1,
-                                                  wordle_data.wordle_answer)
-        wordle_divs[5:10] = temp_wordle.round2_data(wordle_data.wordle_guess2,
-                                                    wordle_data.wordle_answer)
-        wordle_divs[10:15] = temp_wordle.round3_data(wordle_data.wordle_guess3,
-                                                     wordle_data.wordle_answer)
-        wordle_divs[15:20] = temp_wordle.round3_data(wordle_data.wordle_guess4,
-                                                     wordle_data.wordle_answer)
-        return render_template("games/play_wordle.html", wordle_form=wordle_form,
-                               wordle_divs=wordle_divs, page="play_wordle")
-
-    if wordle_data.wordle_round == 5:
-        wordle_divs[:5] = temp_wordle.round1_data(wordle_data.wordle_guess1,
-                                                  wordle_data.wordle_answer)
-        wordle_divs[5:10] = temp_wordle.round2_data(wordle_data.wordle_guess2,
-                                                    wordle_data.wordle_answer)
-        wordle_divs[10:15] = temp_wordle.round3_data(wordle_data.wordle_guess3,
-                                                     wordle_data.wordle_answer)
-        wordle_divs[15:20] = temp_wordle.round3_data(wordle_data.wordle_guess4,
-                                                     wordle_data.wordle_answer)
-        wordle_divs[20:25] = temp_wordle.round3_data(wordle_data.wordle_guess5,
-                                                     wordle_data.wordle_answer)
-        wordle_win = 0
-        return render_template("games/play_wordle.html", wordle_form=wordle_form,
-                               wordle_divs=wordle_divs, wordle_wi=wordle_win, page="play_wordle")
+    return render_template("games/play_wordle.html",
+                           wordle_form=wordle_form,
+                           wordle_divs=wordle_divs,
+                           game_state=game_state,
+                           page="play_wordle")
 
 
 @app.route("/games/numbers", methods=["POST", "GET"])

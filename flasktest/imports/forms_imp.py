@@ -3,6 +3,10 @@ from wtforms import StringField, SubmitField, EmailField, PasswordField, SelectF
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 
 from flasktest.models import User
+from flasktest.imports.wordle_imp import Wordle
+
+banned_username_words = ['root', 'admin', 'sys', 'administrator']
+banned_username_chars = "^(?=.*[-+_!'@#$%^&*., ?])"
 
 
 # ----------------------- Checking forms ----------------------- #
@@ -12,13 +16,26 @@ class UsernameCheck:
         self.banned_chars = banned_chars
 
         if not message:
-            message = "Please choose another username"
+            message = "Please choose another username!"
         self.message = message
 
     def __call__(self, form, field):
         if field.data.lower() in (word.lower() for word in self.banned_words):
             raise ValidationError(self.message)
         if len([x for x in list(self.banned_chars) if x in field.data]):
+            raise ValidationError(self.message)
+
+
+class WordleWordCheck:
+    def __init__(self, allowed_words, message=None):
+        self.allowed_words = allowed_words
+
+        if not message:
+            message = "Word not accepted!"
+        self.message = message
+
+    def __call__(self, form, field):
+        if not field.data.lower() in self.allowed_words:
             raise ValidationError(self.message)
 
 
@@ -39,8 +56,8 @@ class RegisterForm(FlaskForm):
                                               message="Mex length is 50 char"),
                                        UsernameCheck(
                                            message="Username or special characters not allowed",
-                                           banned_words=['root', 'admin', 'sys', 'administrator'],
-                                           banned_chars="^(?=.*[-+_!@#$%^&*., ?])"),
+                                           banned_words=banned_username_words,
+                                           banned_chars=banned_username_chars),
                                        ])
     password = PasswordField(label="Password",
                              render_kw={"placeholder": "Password"},
@@ -56,6 +73,9 @@ class RegisterForm(FlaskForm):
     submit = SubmitField(label="Register")
 
     def validate_email(self, email):
+        """"
+        Checks to see if a user with this email already exists.
+        """
         user = User.query.filter_by(email=email.data).first()
         if user:
             raise ValidationError("Email already registered")
@@ -80,6 +100,9 @@ class LoginForm(FlaskForm):
 
 
     def validate_email(self, email):
+        """"
+        Checks to see if a user with this email exists.
+        """
         user = User.query.filter_by(email=email.data).first()
         if user is None:
             raise ValidationError("Email not in database")
@@ -98,6 +121,9 @@ class EmailForm(FlaskForm):
     submit = SubmitField(label="Submit")
 
     def validate_email(self, email):
+        """"
+        Checks to see if a user with this email exists.
+        """
         user = User.query.filter_by(email=email.data).first()
         if user is None:
             raise ValidationError("Email not in database")
@@ -130,6 +156,9 @@ class ResetForm(FlaskForm):
     submit = SubmitField(label="Reset")
 
     def validate_email(self, email):
+        """"
+        Checks to see if a user with this email exists.
+        """
         user = User.query.filter_by(email=email.data).first()
         if user is None:
             raise ValidationError("Email not in database")
@@ -158,7 +187,7 @@ class CountryForm(FlaskForm):
     Select form for countries page.
     """
     select = SelectField(label="Larger or Smaller?",
-                         choices=[(1, "Larger"), (0, "Smaller")])
+                         choices=[("Larger", "Larger"), ("Smaller", "Smaller")])
     submit = SubmitField(label="Go!")
 
 
@@ -169,7 +198,10 @@ class WordleForm(FlaskForm):
     guess = StringField(render_kw={"placeholder": "Guess a word", "autofocus": True},
                         validators=[DataRequired(message="Please make a guess!"),
                                     Length(min=5, max=5,
-                                           message="5 letters only!")])
+                                           message="5 letters only!"),
+                                    WordleWordCheck(
+                                        message="Word not accepted!",
+                                        allowed_words=Wordle.word_list)])
     submit = SubmitField(label="Guess!")
 
 

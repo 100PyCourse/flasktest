@@ -18,8 +18,8 @@ PUBG_API_KEY = os.environ["PUBG_API_KEY"]
 TIMEOUT = 3
 NR_OF_BARS = 6  # nr of bars created in the charts
 
-GET_PLAYER_ID_URL = "https://api.pubg.com/shards/steam/players?filter[playerNames]="
-GET_SEASONS_URL = "https://api.pubg.com/shards/steam/seasons"
+get_player_id_url = "https://api.pubg.com/shards/steam/players?filter[playerNames]="
+get_seasons_url = "https://api.pubg.com/shards/steam/seasons"
 
 pd.options.display.float_format = "{:,.4f}".format
 headers = {
@@ -36,7 +36,7 @@ def get_player_id(name):
     else returns the status code and the connected flash message.
      """
     response = requests.get(
-        f"{GET_PLAYER_ID_URL}{name}",
+        f"{get_player_id_url}{name}",
         headers=headers,
         timeout=TIMEOUT,
     )
@@ -68,7 +68,7 @@ def get_seasons():
     else returns the status code and the connected flash message.
      """
     response = requests.get(
-        GET_SEASONS_URL,
+        get_seasons_url,
         headers=headers,
         timeout=TIMEOUT,
     )
@@ -158,6 +158,9 @@ def get_all_season_stats(player_id, valid_seasons, game_mode):
         if len(games) == NR_OF_BARS:
             return status_code, [assists, damage, kills, headshots, most_kills,
                                  distance, top10s, games, wins, seasons]
+
+    # Unexpected error
+    status_code = 404
 
     return status_code, [assists, damage, kills, headshots, most_kills,
                          distance, top10s, games, wins, seasons]
@@ -269,6 +272,7 @@ def create_damage_bar(dataframe, name, mode):
     )
 
     damage_bar.write_image("flasktest/static/images/api/pubg/current_damage.png", scale=2)
+
     return "../static/images/api/pubg/current_damage.png"
 
 
@@ -309,18 +313,19 @@ def create_distance_bar(dataframe, name, mode):
 
 
 def load_old_pubg_data(df_path, name, game_mode, save_mode):
-    """"
+    """
     Used to load local record. Takes request form params and returns the bar charts.
     """
     old_df = pd.read_csv(f"{df_path}{name}_{save_mode}.csv")
     kills_img = create_kills_bar(old_df, name, game_mode)
     damage_img = create_damage_bar(old_df, name, game_mode)
     distance_img = create_distance_bar(old_df, name, game_mode)
+
     return kills_img, damage_img, distance_img
 
 
 def update_pubg_api_data():
-    """"
+    """
     Records the time of api request limit to check against when making a new request.
     """
     pubg_data = APIData.query.filter_by(api_name="pubg").first()
@@ -329,8 +334,9 @@ def update_pubg_api_data():
 
 
 def get_pubg_cooldown_message():
-    """"
+    """
     Returns a string containing the api cooldown timer and the connected flash message.
     """
     pubg_data = APIData.query.filter_by(api_name="pubg").first()
+
     return f"API on cooldown. {(pubg_data.last_used + 60) - math.floor(time.time())} seconds left."

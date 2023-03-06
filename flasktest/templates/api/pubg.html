@@ -59,6 +59,10 @@ PUBG
                                 <form method="POST" action="" novalidate>
                                     {{ pubg_form.hidden_tag() }}
                                     <div class="form-group py-3">
+                                        {% for error in pubg_form.errors["name"] %}
+                                            <p class="text-danger mb-1"><strong>{{ error }}</strong></p>
+                                        {% endfor %}
+
                                         <p class="text-white-50 mb-1">{{ pubg_form.name.label }}</p>
                                         {{ pubg_form.name(class="form-control form-control-lg") }}
                                     </div>
