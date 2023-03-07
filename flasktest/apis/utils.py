@@ -1,8 +1,3 @@
-"""
-Handles logic for the pubg page.
-Handles requests, dataframes and images.
-"""
-
 import os
 import time
 import requests
@@ -133,8 +128,9 @@ def get_all_season_stats(player_id, valid_seasons, game_mode):
         elif response.status_code == 429:
             update_pubg_api_data()
             pubg_data = APIData.query.filter_by(api_name="pubg").first()
-            return status_code, f"API on cooldown." \
-                                f" {(pubg_data.last_used + 60) - math.floor(time.time())} seconds left."
+            return status_code,\
+                f"API on cooldown." \
+                f"{(pubg_data.last_used + 60) - math.floor(time.time())} seconds left."
 
         else:
             # Unexpected error

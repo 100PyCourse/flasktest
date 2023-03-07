@@ -1,6 +1,7 @@
 import os
 
 from flask import Flask
+from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
 from flask_bcrypt import Bcrypt
@@ -18,7 +19,19 @@ db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 Bootstrap(app)
 
-from flasktest import routes
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = "users.login"
+
+from flasktest.users.routes import users
+from flasktest.main.routes import main
+from flasktest.apis.routes import apis
+from flasktest.games.routes import games
+
+app.register_blueprint(users)
+app.register_blueprint(main)
+app.register_blueprint(apis)
+app.register_blueprint(games)
 
 with app.app_context():
     if not os.path.exists(f"{WEBSITE_DB_URI}\\website_database.db"):

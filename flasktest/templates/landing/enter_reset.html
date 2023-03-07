@@ -72,13 +72,13 @@ Login
                                 </form>
                             </div>
 
-                            <p class="small mb-5 pb-lg-2"><a class="text-white-50" href="{{ url_for('request_reset')  }}">Re-send code?</a></p>
+                            <p class="small mb-5 pb-lg-2"><a class="text-white-50" href="{{ url_for('users.request_reset')  }}">Re-send code?</a></p>
 
 
                         </div>
 
                         <div>
-                            <p class="mb-0">Don't have an account? <a href="{{ url_for('register')  }}"
+                            <p class="mb-0">Don't have an account? <a href="{{ url_for('users.register')  }}"
                                                                       class="text-white-50 fw-bold">Sign Up</a>
                             </p>
                         </div>

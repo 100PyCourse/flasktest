@@ -4,10 +4,13 @@ Contains all models and their methods for the flask app.
 
 import random
 
-from flasktest import db, bcrypt
-from flasktest.imports.wordle_imp import Wordle
+from flasktest import db, bcrypt, login_manager
 from flask_login import UserMixin
-from sqlalchemy.orm import relationship
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(str(user_id))
 
 
 # ----------------------- Models ----------------------- #
@@ -93,6 +96,9 @@ class APIData(db.Model):
 
 
 # -User------------------ Model functions ----------------------- #
+from flasktest.games.utils import Wordle
+
+
 def add_test_user(email, username, hashed_password, reset_key=000000):
     """
     Takes register_form input and creates a new TEST user with default settings.
@@ -132,13 +138,7 @@ def add_new_user(email, username, hashed_password, reset_key=000000):
     db.session.add(new_user)
     db.session.commit()
 
-    countries_data = CountriesData(
-        country1=random.randint(1, 40),
-        country2=random.randint(1, 40),
-        country_streak=0,
-        country_record=0,
-        user_id=new_user.id,
-    )
+    countries_data = add_new_countries(user_id=new_user.id)
     db.session.add(countries_data)
     db.session.commit()
 
